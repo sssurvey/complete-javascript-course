@@ -12,7 +12,7 @@ class Person {
 function compareMarksBMIToJohn (p1, p2) {
   if (p1.bmi > p2.bmi) {
     console.log('true')
-  } else if (p1.bmi == p2.bmi) {
+  } else if (p1.bmi === p2.bmi) {
     console.log('they are the same')
   } else {
     console.log('false')

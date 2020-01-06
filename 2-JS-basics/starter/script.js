@@ -56,3 +56,36 @@ function calculateWinner(team1, team2) {
 }
 
 calculateWinner(firstTeam, secondTeam);
+
+// coding challenge 3
+var amountSpendArr = [23, 55, 108];
+
+function calculateTip(intArr) {
+    var tipArr = [];
+    intArr.forEach((e) => {
+            switch(e) {
+                case 0 < e && e < 20:
+                    tipArr.push(e * 0.2);
+                    break;
+                case 20 <= e && e <= 50:
+                    tipArr.push(e * 0.15);
+                    break;
+                default:
+                    tipArr.push(e * 0.1);
+            }
+        });
+    tipArr.forEach((e) => {
+        console.log("You need to pay just tip = " + e + " dollars.");
+    });
+
+    var totalAmountArr = [];
+    var counter = 0;
+    intArr.forEach((e)=> {
+        totalAmountArr.push(e + tipArr[counter++]);
+    });    
+    totalAmountArr.forEach((e)=>{
+        console.log("You need to pay total = " + e + " dollars.");
+    });
+}
+
+calculateTip(amountSpendArr);

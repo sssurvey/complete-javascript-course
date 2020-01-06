@@ -3,6 +3,9 @@ class Person {
     constructor(height, weight) {
         this.height = height;
         this.weight = weight;
+    }
+
+    calculateBMI() {
         this.bmi = this.weight / (this.height * this.height);
     }
 
@@ -20,6 +23,9 @@ function compareMarksBMIToJohn(p1, p2) {
 
 var mark = new Person(172, 66);
 var john = new Person(172, 60);
+
+mark.calculateBMI();
+john.calculateBMI();
 
 console.log("Is Mark's BMI higher than John's BMI?");
 compareMarksBMIToJohn(mark, john);

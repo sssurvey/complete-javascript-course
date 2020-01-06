@@ -1,21 +1,37 @@
 ///////////////////////////////////////
 // Lecture: Hoisting
+calculateAge(2000);
 
+function calculateAge(year) {
+    console.log(2016 - year);
+}
 
+// calculateAge2(2000);
+console.log(calculateAge2);
+var calculateAge2 = (year) => {
+    console.log(2016 - year)
+}
+console.log(calculateAge2);
+calculateAge2(2000);
 
+this.console.log((this instanceof Window));
+console.log(this);
+this.onclick = function() {
+    this.console.log("clicked");
+}
 
+var temp = {
+    name: "temp",
+    myFunc: function() {
+        console.log(this);
+        innerFunc();
+        function innerFunc() {
+            console.log(this);
+        }
+    }
+}
 
-
-
-
-
-
-
-
-
-
-
-
+temp.myFunc();
 
 ///////////////////////////////////////
 // Lecture: Scoping

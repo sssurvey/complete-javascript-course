@@ -19,8 +19,8 @@ function compareMarksBMIToJohn(p1, p2) {
     }
 }
 
-const mark = new Person(172, 66);
-const john = new Person(172, 60);
+var mark = new Person(172, 66);
+var john = new Person(172, 60);
 
 mark.calculateBMI();
 john.calculateBMI();
@@ -29,12 +29,12 @@ console.log('Is Mark\'s BMI higher than John\'s BMI?');
 compareMarksBMIToJohn(mark, john);
 
 // coding challenge 2
-const firstTeam = [100, 200, 140];
-const secondTeam = [100, 200, 143];
+var firstTeam = [100, 200, 140];
+var secondTeam = [100, 200, 143];
 
 function calculateWinner(team1, team2) {
-    let avgTeam1 = 0;
-    const avgTeam2 = 0;
+    var avgTeam1 = 0;
+    var avgTeam2 = 0;
     team1.forEach((element) => {
         avgTeam1 += element;
     });
@@ -59,7 +59,7 @@ calculateWinner(firstTeam, secondTeam);
 const amountSpendArr = [23, 55, 108];
 
 function calculateTip(intArr) {
-    const tipArr = [];
+    var tipArr = [];
     intArr.forEach((e) => {
         switch (e) {
             case e > 0 && e < 20:
@@ -76,8 +76,8 @@ function calculateTip(intArr) {
         console.log('You need to pay just tip = ' + e + ' dollars.');
     });
 
-    const totalAmountArr = [];
-    let counter = 0;
+    var totalAmountArr = [];
+    var counter = 0;
     intArr.forEach((e) => {
         totalAmountArr.push(e + tipArr[counter++]);
     });

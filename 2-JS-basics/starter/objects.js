@@ -1,16 +1,16 @@
 var john = {
-  firstName: 'John',
-  lastName: 'Smith',
-  birthYear: 1990,
-  family: ['Jane', 'Mark', 'Bob', 'Emily'],
-  job: 'teacher',
-  isMarried: false,
-  calcAge: function (birthYear) {
-    return 2020 - birthYear
-  },
-  calcAgeDemoThis: function () {
-    return 2020 - this.birthYear
-  }
+    firstName: 'John',
+    lastName: 'Smith',
+    birthYear: 1990,
+    family: ['Jane', 'Mark', 'Bob', 'Emily'],
+    job: 'teacher',
+    isMarried: false,
+    calcAge: function (birthYear) {
+        return 2020 - birthYear
+    },
+    calcAgeDemoThis: function () {
+        return 2020 - this.birthYear
+    }
 }
 
 console.log(john.calcAge(john.birthYear)) // output -> 30

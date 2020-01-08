@@ -8,6 +8,8 @@ GAME RULES:
 - The first player to reach 100 points on GLOBAL score wins the game
 
 */
+const WINNER_SCORE = 100;
+
 var scores;
 var roundScore;
 var activePlayer;
@@ -16,7 +18,9 @@ var player1CurrentScoreDOM;
 var player2CurrentScoreDOM;
 var player1HoldedScoreDOM;
 var player2HoldedScoreDOM;
+var isGameFinished;
 
+isGameFinished = false;
 roundScore = 0;
 scores = [0, 0]; // index [0] for player 1, [1] for player 2
 activePlayer = 0; // 0 for player 1, 1 for player 2
@@ -60,40 +64,42 @@ document.getElementsByClassName('btn-roll')[0].addEventListener('click', () => {
     /* first we check if the dice img is visible, since if the dice image can 
      * If the game is currently not started, we can start the game here too
      */
-    showDice();
-    // generate the random number [1 --- 6]
-    let dice = Math.floor(Math.random() * 6 + 1);
-    // update the active player current score
-    roundScore += dice;
-    document.querySelector('#current-' + activePlayer).innerHTML = '<em>' + roundScore + '</em>';
-    // since dice dom is a img tag using source, we can simply change the src
-    // to show new pictures of the dice to reflect the number
-    switch (dice) {
-        case 1:
-            diceDOM.src = 'dice-1.png';
-            hideDice();
-            // In the case of that the current player rolled a number == 1
-            // then the current player lose all the unsaved points and hand
-            // the round to a different player
-            changePlayerAndResetCurrentScore();
-            break;
-        case 2:
-            diceDOM.src = 'dice-2.png';
-            break;
-        case 3:
-            diceDOM.src = 'dice-3.png';
-            break;
-        case 4:
-            diceDOM.src = 'dice-4.png';
-            break;
-        case 5:
-            diceDOM.src = 'dice-5.png';
-            break;
-        case 6:
-            diceDOM.src = 'dice-6.png';
-            break;
-        default:
-            console.log("dice pic error");
+    if (!isGameFinished) {
+        showDice();
+        // generate the random number [1 --- 6]
+        let dice = Math.floor(Math.random() * 6 + 1);
+        // update the active player current score
+        roundScore += dice;
+        document.querySelector('#current-' + activePlayer).innerHTML = '<em>' + roundScore + '</em>';
+        // since dice dom is a img tag using source, we can simply change the src
+        // to show new pictures of the dice to reflect the number
+        switch (dice) {
+            case 1:
+                diceDOM.src = 'dice-1.png';
+                hideDice();
+                // In the case of that the current player rolled a number == 1
+                // then the current player lose all the unsaved points and hand
+                // the round to a different player
+                changePlayerAndResetCurrentScore();
+                break;
+            case 2:
+                diceDOM.src = 'dice-2.png';
+                break;
+            case 3:
+                diceDOM.src = 'dice-3.png';
+                break;
+            case 4:
+                diceDOM.src = 'dice-4.png';
+                break;
+            case 5:
+                diceDOM.src = 'dice-5.png';
+                break;
+            case 6:
+                diceDOM.src = 'dice-6.png';
+                break;
+            default:
+                console.log("dice pic error");
+        }
     }
 });
 
@@ -117,8 +123,10 @@ function newGameOnClick() {
     scores[0] = 0;
     scores[1] = 0;
     roundScore = 0;
+    isGameFinished = false;
     changePlayerAndResetCurrentScore();
     refreshSavedScoreBoard();
+    resetPlayerWinner();
 }
 function changePlayerAndResetCurrentScore() {
     resetRoundScore();
@@ -162,10 +170,42 @@ function resetRoundScore() {
  * also the player will forfit the round to another player
  */
 function onHoldButtonPress() {
-    scores[activePlayer] += roundScore;
-    refreshSavedScoreBoard();
-    hideDice();
-    changePlayerAndResetCurrentScore();
+    if (!isGameFinished) {
+        scores[activePlayer] += roundScore;
+        if (scores[activePlayer] >= WINNER_SCORE) {
+            isGameFinished = true;
+            setActivePlayerToWinner(activePlayer);
+        }
+        refreshSavedScoreBoard();
+        hideDice();
+        changePlayerAndResetCurrentScore();
+    }
+}
+
+function setActivePlayerToWinner(activePlayerNumber) {
+    switch (activePlayerNumber) {
+        case 0:
+            document.getElementById('name-0')
+                .textContent = "Winner!";
+            document.getElementsByClassName("player-0-panel")[0].classList.add('winner');
+            break;
+        case 1:
+            document.getElementById('name-1')
+                .textContent = "Winner!";
+            document.getElementsByClassName("player-1-panel")[0].classList.add('winner');
+            break;
+        default:
+            console.log("ERROR");
+    }
+}
+
+function resetPlayerWinner() {
+    document.getElementById('name-0').textContent = "Player 1";
+    document.getElementById('name-1').textContent = "Player 2";
+    document.getElementsByClassName("player-0-panel")[0]
+        .classList.remove('winner');
+    document.getElementsByClassName("player-1-panel")[0]
+        .classList.remove('winner');
 }
 
 function refreshSavedScoreBoard() {

@@ -51,20 +51,6 @@ document.getElementsByClassName('btn-new')[0].onclick = newGameOnClick;
 // Set Onclick for hold button
 document.getElementsByClassName('btn-hold')[0].addEventListener('click', onHoldButtonPress);
 
-function newGameOnClick() {
-    // This line reset the button to its default value in HTML
-    // document.getElementsByClassName('dice')[0].style.display = 'inital';
-    // However, I want to explicity set it to block, which is visible in JS at
-    // front in JS
-    if (diceDOM.style.display === 'none') diceDOM.style.display = 'block';
-    // we should also reset all scores when this button is clicked
-    scores[0] = 0;
-    scores[1] = 0;
-    roundScore = 0;
-    activePlayer = 0;
-    refreshSavedScoreBoard();
-}
-
 // ********************************************************
 // Add an event listener to the "btn-roll" roll button
 // -> 1st by add event listner way, and we supply the callback via anom function
@@ -112,6 +98,20 @@ document.getElementsByClassName('btn-roll')[0].addEventListener('click', () => {
         }
     }
 });
+
+function newGameOnClick() {
+    // This line reset the button to its default value in HTML
+    // document.getElementsByClassName('dice')[0].style.display = 'inital';
+    // However, I want to explicity set it to block, which is visible in JS at
+    // front in JS
+    if (diceDOM.style.display === 'none') diceDOM.style.display = 'block';
+    // we should also reset all scores when this button is clicked
+    scores[0] = 0;
+    scores[1] = 0;
+    roundScore = 0;
+    activePlayer = 0;
+    refreshSavedScoreBoard();
+}
 
 function changePlayerAndResetCurrentScore() {
     resetRoundScore();

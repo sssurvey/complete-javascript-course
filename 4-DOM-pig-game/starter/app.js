@@ -58,64 +58,91 @@ document.getElementsByClassName('btn-roll')[0].addEventListener('click', () => {
     // specify what the button on click do
 
     /* first we check if the dice img is visible, since if the dice image can 
-     * only be visible if a new game is started, and if a new game is not started
-     * then it does not make any sense for the button to be able to generate
-     * random numbers.
+     * If the game is currently not started, we can start the game here too
      */
-    if (diceDOM.style.display !== 'none') {
-        // generate the random number [1 --- 6]
-        let dice = Math.floor(Math.random() * 6 + 1);
-        // update the active player current score
-        roundScore += dice;
-        document.querySelector('#current-' + activePlayer).innerHTML = '<em>' + roundScore + '</em>';
-        // since dice dom is a img tag using source, we can simply change the src
-        // to show new pictures of the dice to reflect the number
-        switch (dice) {
-            case 1:
-                diceDOM.src = 'dice-1.png';
-                // In the case of that the current player rolled a number == 1
-                // then the current player lose all the unsaved points and hand
-                // the round to a different player
-                changePlayerAndResetCurrentScore();
-                break;
-            case 2:
-                diceDOM.src = 'dice-2.png';
-                break;
-            case 3:
-                diceDOM.src = 'dice-3.png';
-                break;
-            case 4:
-                diceDOM.src = 'dice-4.png';
-                break;
-            case 5:
-                diceDOM.src = 'dice-5.png';
-                break;
-            case 6:
-                diceDOM.src = 'dice-6.png';
-                break;
-            default:
-                console.log("dice pic error");
-        }
+    showDice();
+    // generate the random number [1 --- 6]
+    let dice = Math.floor(Math.random() * 6 + 1);
+    // update the active player current score
+    roundScore += dice;
+    document.querySelector('#current-' + activePlayer).innerHTML = '<em>' + roundScore + '</em>';
+    // since dice dom is a img tag using source, we can simply change the src
+    // to show new pictures of the dice to reflect the number
+    switch (dice) {
+        case 1:
+            diceDOM.src = 'dice-1.png';
+            hideDice();
+            // In the case of that the current player rolled a number == 1
+            // then the current player lose all the unsaved points and hand
+            // the round to a different player
+            changePlayerAndResetCurrentScore();
+            break;
+        case 2:
+            diceDOM.src = 'dice-2.png';
+            break;
+        case 3:
+            diceDOM.src = 'dice-3.png';
+            break;
+        case 4:
+            diceDOM.src = 'dice-4.png';
+            break;
+        case 5:
+            diceDOM.src = 'dice-5.png';
+            break;
+        case 6:
+            diceDOM.src = 'dice-6.png';
+            break;
+        default:
+            console.log("dice pic error");
     }
 });
+
+function hideDice() {
+    if (diceDOM.style.display === 'block') {
+        diceDOM.style.display = 'none';
+    }
+}
+
+function showDice() {
+    if (diceDOM.style.display === 'none') diceDOM.style.display = 'block';
+}
 
 function newGameOnClick() {
     // This line reset the button to its default value in HTML
     // document.getElementsByClassName('dice')[0].style.display = 'inital';
     // However, I want to explicity set it to block, which is visible in JS at
     // front in JS
-    if (diceDOM.style.display === 'none') diceDOM.style.display = 'block';
+    hideDice();
     // we should also reset all scores when this button is clicked
     scores[0] = 0;
     scores[1] = 0;
     roundScore = 0;
-    activePlayer = 0;
+    changePlayerAndResetCurrentScore();
     refreshSavedScoreBoard();
 }
-
 function changePlayerAndResetCurrentScore() {
     resetRoundScore();
     activePlayer = activePlayer ? 0 : 1;
+    // NOTE: here is very import, and can change the class on the fly
+    // in the code the active player class is called "<div class="player-0-panel
+    // active">" however, we want to remove if when it is not active and let the
+    // other player be active. Here is what we needs to do:
+    // document.getElementsByClassName('player-0-panel')[0]
+    //     .classList.toggle('active');
+    // document.getElementsByClassName('player-1-panel')[0]
+    //     .classList.toggle('active');
+    // below is using add and remove
+    if (activePlayer === 0) {
+        document.getElementsByClassName('player-1-panel')[0]
+            .classList.remove('active');
+        document.getElementsByClassName('player-0-panel')[0]
+            .classList.add('active');
+    } else {
+        document.getElementsByClassName('player-1-panel')[0]
+            .classList.add('active');
+        document.getElementsByClassName('player-0-panel')[0]
+            .classList.remove('active');
+    }
 }
 
 /* 
@@ -137,6 +164,7 @@ function resetRoundScore() {
 function onHoldButtonPress() {
     scores[activePlayer] += roundScore;
     refreshSavedScoreBoard();
+    hideDice();
     changePlayerAndResetCurrentScore();
 }
 

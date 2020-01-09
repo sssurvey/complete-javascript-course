@@ -100,12 +100,14 @@ function generateRandomDiceNumber() {
 }
 
 function onHoldClicked() {
-    scoreboards[activePlayer] += currentScore;
-    resetCurrentScore();
-    refreshSavedScoreBoardUI();
-    hideDice();
-    changeActivePlayer();
-    checkForWinCondition();
+    if (isGameStarted) {
+        scoreboards[activePlayer] += currentScore;
+        resetCurrentScore();
+        refreshSavedScoreBoardUI();
+        hideDice();
+        changeActivePlayer();
+        checkForWinCondition();
+    }
 }
 
 function checkForWinCondition() {
@@ -117,6 +119,7 @@ function checkForWinCondition() {
 }
 
 function setPlayerToWinner(winnerPlayer) {
+    endCurrentGame();
     if (winnerPlayer === 0) {
         player1NameDOM.textContent = 'winner';
         player1PanelDOM.classList.add('winner');
@@ -125,6 +128,10 @@ function setPlayerToWinner(winnerPlayer) {
         player2PanelDOM.classList.add('winner');
     }
 }
+
+function endCurrentGame() {
+    isGameStarted = false;
+} 
 
 function removeWinner() {
     player1PanelDOM.classList.remove('winner');

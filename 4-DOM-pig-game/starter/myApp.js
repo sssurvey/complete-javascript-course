@@ -7,6 +7,10 @@ let currentScore;
 let isGameStarted = false;
 
 let diceDOM = document.getElementsByClassName('dice')[0];
+let player1NameDOM = document.getElementById('name-0');
+let player2NameDOM = document.getElementById('name-1');
+let player1PanelDOM = document.getElementsByClassName('player-0-panel')[0];
+let player2PanelDOM = document.getElementsByClassName('player-1-panel')[0];
 let player1CurrentScoreDOM = document.getElementById('current-0');
 let player2CurrentScoreDOM = document.getElementById('current-1');
 let player1HoldedScoreDOM = document.getElementById('score-0');
@@ -24,6 +28,8 @@ function init() {
     resetCurrentScore();
     refreshSavedScoreBoardUI();
     hideDice();
+    removeWinner();
+    resetPlayerName();
 }
 
 function setOnClickListeners() {
@@ -35,12 +41,15 @@ function setOnClickListeners() {
 function onNewGameClicked() {
     isGameStarted = true;
     scoreboards = [0,0];
-    hideDice();
+    changeActivePlayer();
     resetCurrentScore();
+    refreshSavedScoreBoardUI();
+    hideDice();
+    removeWinner();
+    resetPlayerName();
 }
 
 function onRollDice() {
-    console.log(activePlayer);
     if (isGameStarted) {
         let diceNumber = generateRandomDiceNumber();
         switch(diceNumber) {
@@ -65,6 +74,17 @@ function onRollDice() {
 
 function changeActivePlayer() {
     activePlayer = activePlayer ? 0 : 1;
+    updateActivePlayer(activePlayer);
+}
+
+function updateActivePlayer(currentActivePlayer) {
+    if (currentActivePlayer === 0) {
+        player1PanelDOM.classList.add('active');
+        player2PanelDOM.classList.remove('active');
+    } else {
+        player2PanelDOM.classList.add('active');
+        player1PanelDOM.classList.remove('active');
+    }
 }
 
 function incrementCurrentScore(diceNumber) {
@@ -85,6 +105,35 @@ function onHoldClicked() {
     refreshSavedScoreBoardUI();
     hideDice();
     changeActivePlayer();
+    checkForWinCondition();
+}
+
+function checkForWinCondition() {
+    scoreboards.forEach((score, index) => {
+        if (score >= WINNER_SCORE) {
+            setPlayerToWinner(index)
+        }
+    });
+}
+
+function setPlayerToWinner(winnerPlayer) {
+    if (winnerPlayer === 0) {
+        player1NameDOM.textContent = 'winner';
+        player1PanelDOM.classList.add('winner');
+    } else {
+        player2NameDOM.textContent = 'winner';
+        player2PanelDOM.classList.add('winner');
+    }
+}
+
+function removeWinner() {
+    player1PanelDOM.classList.remove('winner');
+    player2PanelDOM.classList.remove('winner');
+}
+
+function resetPlayerName() {
+    player1NameDOM.textContent = 'player 1';
+    player1NameDOM.textContent = 'player 2';
 }
 
 function hideDice() {

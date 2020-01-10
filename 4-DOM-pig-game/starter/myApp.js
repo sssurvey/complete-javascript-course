@@ -54,7 +54,6 @@ function hideInputWinningScoreUI() {
 
 function updateWinningScore() {
     winningScore = winningScoreInputDOM.value;
-    console.log(winningScore)
 }
 
 function resetWinningScore() {

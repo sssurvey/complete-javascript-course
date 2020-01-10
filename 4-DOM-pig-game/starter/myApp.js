@@ -6,6 +6,7 @@
 //          = once the user clicks new game, a box will be shown at top for user
 //            to input score
 //          = if the user clicks roll dice the box hides itself and set win score
+// 3. Add another dice, however, if the player
 
 let activePlayer;
 let scoreboards;

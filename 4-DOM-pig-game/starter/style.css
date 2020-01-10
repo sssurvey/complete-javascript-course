@@ -15,13 +15,22 @@
     clear: both;
 }
 
+::placeholder {
+    color: #f7f7f7;
+}
+
 .input-box {
-    color: #EB4D4D;
+    background-color: #EB4D4D;
+    color: #f7f7f7;
+    box-shadow: none;
+    border-color: #EB4D4D;
+    font-size: medium;
+    font-family: 'Lato';
     top: 40px;
     margin: 0 auto;
-    padding: 12px;
+    padding: 5px;
     text-align: center;
-    width: 100px;
+    width: 100%;
     display: none;
 }
 

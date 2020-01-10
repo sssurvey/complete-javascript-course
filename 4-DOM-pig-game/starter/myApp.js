@@ -163,9 +163,13 @@ function refreshSavedScoreBoardUI() {
 }
 
 function refreshCurrentScoreBoardUI(activePlayer) {
+    function htmlItalicWrapper(contentText) {
+        return '<em>' + contentText + "</em>"
+    }
+
     if (activePlayer === 0) {
-        player1CurrentScoreDOM.textContent = currentScore + '';
+        player1CurrentScoreDOM.innerHTML =  htmlItalicWrapper(currentScore);
     } else if (activePlayer === 1) {
-        player2CurrentScoreDOM.textContent = currentScore + '';
+        player2CurrentScoreDOM.innerHTML = htmlItalicWrapper(currentScore);
     }
 }

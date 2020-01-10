@@ -6,7 +6,9 @@
 //          = once the user clicks new game, a box will be shown at top for user
 //            to input score
 //          = if the user clicks roll dice the box hides itself and set win score
-// 3. Add another dice, however, if the player
+// 3. Add another dice, however, if the player, rolled one dice to one, then they
+// lost all their score
+//      - impl completes
 
 let activePlayer;
 let scoreboards;
@@ -16,7 +18,8 @@ let lastDiceScore;
 let isGameStarted = false;
 let winningScore = 100;
 
-let diceDOM = document.getElementsByClassName('dice')[0];
+let dice1DOM = document.getElementById('dice-0');
+let dice2DOM = document.getElementById('dice-1');
 let player1NameDOM = document.getElementById('name-0');
 let player2NameDOM = document.getElementById('name-1');
 let player1PanelDOM = document.getElementsByClassName('player-0-panel')[0];
@@ -54,7 +57,13 @@ function hideInputWinningScoreUI() {
 }
 
 function updateWinningScore() {
-    winningScore = winningScoreInputDOM.value;
+    if (winningScoreInputDOM.value === undefined
+        || winningScoreInputDOM.value === 0
+        || winningScoreInputDOM.value === null) {
+        winningScore = 100;
+    } else {
+        winningScore = winningScoreInputDOM.value;
+    }
 }
 
 function resetWinningScore() {
@@ -70,6 +79,7 @@ function setOnClickListeners() {
 function onNewGameClicked() {
     isGameStarted = true;
     scoreboards = [0,0];
+    updateWinningScore();
     resetWinningScore();
     changeActivePlayer();
     resetCurrentScore();
@@ -82,31 +92,29 @@ function onNewGameClicked() {
 
 function onRollDice() {
     if (isGameStarted) {
+
         hideInputWinningScoreUI();
-        updateWinningScore();
-        let diceNumber = generateRandomDiceNumber();
-        switch(diceNumber) {
-            case 1:
-                hideDice();
-                resetCurrentScore();
-                changeActivePlayer();
-                break;
-            default:
-                if (checkIfLastDiceRollIsSix(diceNumber)) {
-                    scoreboards[activePlayer] = 0;
-                    hideDice();
-                    resetCurrentScore();
-                    refreshSavedScoreBoardUI();
-                    changeActivePlayer();
-                } else {
-                    checkIfLastDiceRollIsSix(diceNumber);
-                    saveLastRoll(diceNumber);
-                    incrementCurrentScore(diceNumber);
-                    refreshDiceImage(diceNumber);
-                    refreshCurrentScoreBoardUI(activePlayer);
-                    showDice();
-                }
-                break;
+
+        let dice1Number = generateRandomDiceNumber();
+        let dice2Number = generateRandomDiceNumber();
+
+        if (dice1Number === 1 && dice2Number === 1) {
+            hideDice();
+            resetCurrentScore();
+            changeActivePlayer();
+        } else if (checkIfLastDiceRollIsSix(dice1Number)) {
+            scoreboards[activePlayer] = 0;
+            hideDice();
+            resetCurrentScore();
+            refreshSavedScoreBoardUI();
+            changeActivePlayer();
+        } else {
+            checkIfLastDiceRollIsSix(dice1Number + dice2Number);
+            saveLastRoll(dice1Number + dice2Number);
+            incrementCurrentScore(dice1Number + dice2Number);
+            refreshDiceImage(dice1Number, dice2Number);
+            refreshCurrentScoreBoardUI(activePlayer);
+            showDice();
         }
     }
 }
@@ -143,8 +151,9 @@ function incrementCurrentScore(diceNumber) {
     currentScore += diceNumber;
 }
 
-function refreshDiceImage(diceNumber) {
-    diceDOM.src = 'dice-' + diceNumber + ".png";
+function refreshDiceImage(dice1Number, dice2Number) {
+    dice1DOM.src = 'dice-' + dice1Number + ".png";
+    dice2DOM.src = 'dice-' + dice2Number + ".png";
 }
 
 function generateRandomDiceNumber() {
@@ -154,6 +163,7 @@ function generateRandomDiceNumber() {
 function onHoldClicked() {
     if (isGameStarted) {
         scoreboards[activePlayer] += currentScore;
+        updateWinningScore();
         resetCurrentScore();
         refreshSavedScoreBoardUI();
         hideDice();
@@ -196,11 +206,13 @@ function resetPlayerName() {
 }
 
 function hideDice() {
-    diceDOM.style.display = 'none';
+    dice1DOM.style.display = 'none';
+    dice2DOM.style.display = 'none';
 }
 
 function showDice() {
-    diceDOM.style.display = 'block';
+    dice1DOM.style.display = 'block';
+    dice2DOM.style.display = 'block';
 }
 
 function resetCurrentScore() {

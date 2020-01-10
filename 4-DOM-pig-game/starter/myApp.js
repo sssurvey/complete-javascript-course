@@ -1,3 +1,7 @@
+// Coding challenges:
+// 1. If a player got two 6 in a role, he lose his entire score and player change
+//      - impl completes
+
 const WINNER_SCORE = 100;
 
 let activePlayer;
@@ -5,6 +9,7 @@ let scoreboards;
 let currentScore;
 
 let isGameStarted = false;
+let lastDiceScore;
 
 let diceDOM = document.getElementsByClassName('dice')[0];
 let player1NameDOM = document.getElementById('name-0');
@@ -58,23 +63,42 @@ function onRollDice() {
                 resetCurrentScore();
                 changeActivePlayer();
                 break;
-            case 2:
-            case 3:
-            case 4:
-            case 5:
-            case 6:
-                incrementCurrentScore(diceNumber);
-                refreshDiceImage(diceNumber);
-                refreshCurrentScoreBoardUI(activePlayer);
-                showDice();
+            default:
+                if (checkIfLastDiceRollIsSix(diceNumber)) {
+                    scoreboards[activePlayer] = 0;
+                    hideDice();
+                    resetCurrentScore();
+                    refreshSavedScoreBoardUI();
+                    changeActivePlayer();
+                } else {
+                    checkIfLastDiceRollIsSix(diceNumber);
+                    saveLastRoll(diceNumber);
+                    incrementCurrentScore(diceNumber);
+                    refreshDiceImage(diceNumber);
+                    refreshCurrentScoreBoardUI(activePlayer);
+                    showDice();
+                }
                 break;
         }
     }
 }
 
+function saveLastRoll(diceNumber) {
+    lastDiceScore = diceNumber;
+}
+
+function checkIfLastDiceRollIsSix(currentDiceRow) {
+    return (currentDiceRow === lastDiceScore && lastDiceScore === 6)
+}
+
 function changeActivePlayer() {
+    clearPreviousRoll();
     activePlayer = activePlayer ? 0 : 1;
     updateActivePlayer(activePlayer);
+
+    function clearPreviousRoll() {
+        lastDiceScore = undefined;
+    }
 }
 
 function updateActivePlayer(currentActivePlayer) {

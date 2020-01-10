@@ -1,15 +1,19 @@
 // Coding challenges:
 // 1. If a player got two 6 in a role, he lose his entire score and player change
 //      - impl completes
-
-const WINNER_SCORE = 100;
+// 2. Add an input field to the html where player can set the winner score
+//      - impl completes
+//          = once the user clicks new game, a box will be shown at top for user
+//            to input score
+//          = if the user clicks roll dice the box hides itself and set win score
 
 let activePlayer;
 let scoreboards;
 let currentScore;
+let lastDiceScore;
 
 let isGameStarted = false;
-let lastDiceScore;
+let winningScore = 100;
 
 let diceDOM = document.getElementsByClassName('dice')[0];
 let player1NameDOM = document.getElementById('name-0');
@@ -23,6 +27,7 @@ let player2HoldedScoreDOM = document.getElementById('score-1');
 let holdButtonDOM = document.getElementsByClassName('btn-hold')[0];
 let newGameButtonDOM = document.getElementsByClassName('btn-new')[0];
 let rollDiceButtonDOM = document.getElementsByClassName('btn-roll')[0];
+let winningScoreInputDOM = document.getElementById('set-score')
 
 init();
 setOnClickListeners();
@@ -37,6 +42,25 @@ function init() {
     resetPlayerName();
 }
 
+function showInputWinningScoreUI() {
+    winningScoreInputDOM.style.display = 'block'
+    document.getElementsByClassName('input-box')[0].style.display = 'block'
+}
+
+function hideInputWinningScoreUI() {
+    winningScoreInputDOM.style.display = 'none'
+    document.getElementsByClassName('input-box')[0].style.display = 'none'
+}
+
+function updateWinningScore() {
+    winningScore = winningScoreInputDOM.value;
+    console.log(winningScore)
+}
+
+function resetWinningScore() {
+    winningScore = 100;
+}
+
 function setOnClickListeners() {
     newGameButtonDOM.addEventListener('click', onNewGameClicked);
     rollDiceButtonDOM.addEventListener('click', onRollDice);
@@ -46,16 +70,20 @@ function setOnClickListeners() {
 function onNewGameClicked() {
     isGameStarted = true;
     scoreboards = [0,0];
+    resetWinningScore();
     changeActivePlayer();
     resetCurrentScore();
     refreshSavedScoreBoardUI();
     hideDice();
     removeWinner();
     resetPlayerName();
+    showInputWinningScoreUI();
 }
 
 function onRollDice() {
     if (isGameStarted) {
+        hideInputWinningScoreUI();
+        updateWinningScore();
         let diceNumber = generateRandomDiceNumber();
         switch(diceNumber) {
             case 1:
@@ -136,7 +164,7 @@ function onHoldClicked() {
 
 function checkForWinCondition() {
     scoreboards.forEach((score, index) => {
-        if (score >= WINNER_SCORE) {
+        if (score >= winningScore) {
             setPlayerToWinner(index)
         }
     });

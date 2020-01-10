@@ -15,6 +15,16 @@
     clear: both;
 }
 
+.input-box {
+    color: #EB4D4D;
+    top: 40px;
+    margin: 0 auto;
+    padding: 12px;
+    text-align: center;
+    width: 100px;
+    display: none;
+}
+
 body {
     background-image: linear-gradient(rgba(62, 20, 20, 0.4), rgba(62, 20, 20, 0.4)), url(back.jpg);
     background-size: cover;

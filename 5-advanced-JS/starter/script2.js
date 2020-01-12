@@ -59,12 +59,42 @@ function interviewQuestionClosure(job) {
     }
 }
 
+// bind, call and apply methods:
+var john2 = {
+    name: "John II",
+    age: 26,
+    job: 'teacher',
+    presentation: function (style, timeOfTheDay) {
+        if (style === 'formal') {
+            console.log('Good ' + timeOfTheDay + ", ladies and gents. I'm " + this.name + " and I am " + this.age + " years old. My job is " + this.job + ".");
+        } else {
+            console.log("Hey! What's up? I'm " + this.name + " and I am " + this.age + " years old. My job is " + this.job + ". Have a nice " + timeOfTheDay + "." );
+        }
+    }
+};
+
+var emily = {
+    name: 'Emily',
+    age: 35,
+    job: 'designer'
+};
+
+// here is a demo case of bind method, this allow us the spec out the params 
+// for the method and use the method later. the method is saved into this var
+// here called 'johnFriendly' we can later invoke this var to call the function
+var johnFriendlyFull = john2.presentation.bind(john2, 'friendly', 'afternoon');
+// notice we can supply all the params at once (above) or supply some of it now
+// and supply the missing ones later when we invoke the function call
+var johnFriendlyNeedsDate = john2.presentation.bind(john2, 'friendly');
+
+
+
 // console
 (function consoleOutput() {
 
     // function that takes a function as param, output below
     console.log(arrayCalculator(years, calculateAge));
-    
+
     // the first fucntion returns a function for us to call it
     // function that returns a function output below
     interviewQuestion('hacker')('Neo'); 
@@ -80,4 +110,11 @@ function interviewQuestionClosure(job) {
     var designerQuestion2 = interviewQuestionClosure('designer');
     teacherQuestion2('Jane');
     designerQuestion2('Dan');
+
+    // bind, call and apply
+    john2.presentation('formal', 'morning');
+    john2.presentation.call(emily, 'formal', 'afternoon');
+    john2.presentation.apply(emily, ['friendly', 'evening']);
+    johnFriendlyFull();
+    johnFriendlyNeedsDate('evening');
 })();

@@ -16,17 +16,17 @@
  * TODO: completes it
  */
 
- /**
-  * Create questions instance, Question constructor
-  * @param {string} question The Question description
-  * @param {[]} answers An array for all the answers to choose from
-  * @param {number} correctAnswerIndex The index for correct answer in answers[]
-  */
-var Question = function (question, answers, correctAnswerIndex) {
+/**
+ * Create questions instance, Question constructor
+ * @param {string} question The Question description
+ * @param {[]} answers An array for all the answers to choose from
+ * @param {number} correctAnswerIndex The index for correct answer in answers[]
+ */
+function Question(question, answers, correctAnswerIndex) {
     this.question = question,
     this.answers = answers,
     this.correctAnswerIndex = correctAnswerIndex
-};
+}
 
 /**
  * Print the entire question, include question desc, and all the answers, ranked

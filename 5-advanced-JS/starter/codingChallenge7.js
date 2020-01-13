@@ -16,6 +16,11 @@
  * TODO: completes it
  */
 
+ /**
+  * Start of the entire script file level IIFE to encapsulate everything as 
+  * required!
+  */
+ (function () {
 /**
  * Create questions instance, Question constructor
  * @param {string} question The Question description
@@ -143,3 +148,5 @@ function functionRunner(questionArr) {
 (function () {
     prepareQuestions(functionRunner);
 })();
+
+})(); // END of entire iife

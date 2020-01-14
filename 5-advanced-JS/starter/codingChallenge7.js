@@ -13,7 +13,11 @@
  *  - use the IIFE pattern to be encapsulated
  *  ========================= all above completes ============================
  * Challenge 2:
- * TODO: completes it
+ *  - after you display the result, display the next random question, so that the
+ *    game never ends
+ *  - provide a way for user to break away from the loop
+ *  - track the user's score to make the game more fun! so each time an answer
+ *    is correct, add 1 points to the score
  */
 
  /**
@@ -120,6 +124,7 @@ function generateRandomIndex(length) {
  */
 function functionRunner(questionArr) {
 
+    var totalScore = 0;
     var flag = true;
     var index = generateRandomIndex(questionArr.length - 1);
 
@@ -129,13 +134,15 @@ function functionRunner(questionArr) {
         var promptResult = readFromConsole();
 
         if (promptResult === 'exit') {
+            console.log('You total score is: ' + totalScore);
             flag = false;
         } else if (questionArr[index].validateAnswer(promptResult)) {
-            console.log("You have choosen the correct ANSWER!")
+            console.log("You have choosen the correct ANSWER!");
+            totalScore++;
             index = generateRandomIndex(questionArr.length - 1);
         } else {
             // no-op ask the same question
-            console.log("You have choosen the wrong ANSWER!")
+            console.log("You have choosen the wrong ANSWER!");
         }
     }
 

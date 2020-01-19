@@ -3,7 +3,37 @@ var BudgetController = (function () {
 })();
 
 var UIController = (function () {
-    return {}
+
+    const ADD_TYPE = 'add__type';
+    const ADD_VALUE = 'add__value';
+    const ADD_DESCRIPTION = 'add__description';
+
+    return {
+        /**
+         * Return UI Input types:
+         * This function will return the 3 input values from DOMs: add__type,
+         * add__description and add__value.
+         * @access public
+         * Returns UI element DOMs as an object.
+         * @return {{ type, description, value }}
+         */
+        getAddInputValues: function() {
+            /**
+             * @var {HTMLElement} addTypeDOM type:
+             * "+" operator for increase
+             * "-" operator for decrease
+             */
+            var addTypeDOM = document.getElementsByClassName(ADD_TYPE)[0];
+            var valueDOM = document.getElementsByClassName(ADD_VALUE)[0];
+            var addDescriptionDOM = document.getElementsByClassName(ADD_DESCRIPTION)[0];
+            
+            return {
+                type: addTypeDOM.value,
+                description: addDescriptionDOM.value,
+                value: valueDOM.value,
+            }
+        }
+    };
 })();
 
 var Controller = (function (budgetController, uIController) {
@@ -22,18 +52,27 @@ var Controller = (function (budgetController, uIController) {
         });
     }
 
+    /**
+     * Add onclick listeners for add related operations
+     * @access private
+     */
     function addButtonOnClickListener() {
-        console.log("TODO!")
         //TODO: 
         // 1. get the input data
+        var addInputValues = uIController.getAddInputValues();
+
         // 2. Add item to the buddget controller
         // 3. Add the item to the UI
         // 4. Calculate the budget
-        // 4. Display the budget on the UI
+        // 5. Display the budget on the UI
+
+        // test:
+        console.log("TODO!");
+        console.log(addInputValues);
     }
 
     return {}
-    
+
 })(BudgetController, UIController);
 
 

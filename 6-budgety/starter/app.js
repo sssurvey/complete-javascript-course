@@ -17,13 +17,13 @@ var UIController = (function () {
          * @access public
          * Returns UI element DOMs as an object.
          * @return {{ type, description, value }}
+         *
+         * Details:
+         * @var {HTMLElement} addTypeDOM type:
+         * "+" operator for increase
+         * "-" operator for decrease
          */
         getAddInputValues: function() {
-            /**
-             * @var {HTMLElement} addTypeDOM type:
-             * "+" operator for increase
-             * "-" operator for decrease
-             */
             var addTypeDOM = document.getElementsByClassName(ADD_TYPE)[0];
             var valueDOM = document.getElementsByClassName(ADD_VALUE)[0];
             var addDescriptionDOM = document.getElementsByClassName(ADD_DESCRIPTION)[0];
@@ -87,7 +87,7 @@ var Controller = (function (budgetController, uIController) {
     }
     
     return {
-        
+
     }
 
 })(BudgetController, UIController);

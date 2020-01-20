@@ -63,15 +63,21 @@ var UIController = (function () {
 })();
 
 var Controller = (function (budgetController, uIController) {
-    
-    uIController.setAddButtonOnClickListener(handleAddValue);
-    UIController.setDocumentEnterKeyPressEventListener(handleAddValue);
+
+    /**
+     * Setup all the event listeners
+     * @access private
+     */
+    function setUpEventListeners() {
+        uIController.setAddButtonOnClickListener(handleAddExpense);
+        UIController.setDocumentEnterKeyPressEventListener(handleAddExpense);
+    }
 
     /**
      * Add onclick listeners for add related operations
      * @access private
      */
-    function handleAddValue() {
+    function handleAddExpense() {
         //TODO: 
         // 1. get the input data
         var addInputValues = uIController.getAddInputValues();
@@ -87,11 +93,17 @@ var Controller = (function (budgetController, uIController) {
     }
     
     return {
-
+        /**
+         * This is the init function of the Controller module
+         * EventListeners will be set up here
+         * @access public
+         */
+        init: function () {
+            setUpEventListeners();
+        }
     }
 
 })(BudgetController, UIController);
 
 // top level
-
-
+Controller.init();

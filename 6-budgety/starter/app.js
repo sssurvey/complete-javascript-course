@@ -5,6 +5,7 @@ var BudgetController = (function () {
 var UIController = (function () {
 
     const ADD_TYPE = 'add__type';
+    const ADD_BUTTON = 'add__btn';
     const ADD_VALUE = 'add__value';
     const ADD_DESCRIPTION = 'add__description';
 
@@ -32,31 +33,45 @@ var UIController = (function () {
                 description: addDescriptionDOM.value,
                 value: valueDOM.value,
             }
+        },
+        /**
+         * Set onclick listner callbacks for ADD button
+         * This function will set the callback for the add button to the function
+         * that we passed in as param
+         * @access public
+         * @param {function} listenerCallback
+         */
+        setAddButtonOnClickListener: function (listenerCallback) {
+            var addButtonDOM = document.getElementsByClassName(ADD_BUTTON)[0];
+            addButtonDOM.addEventListener('click', listenerCallback);
+        },
+        /**
+         * Set on keypress callback for the ENTER key
+         * This functrion will set the document on enter pressed callback to the
+         * function we passed in as param
+         * @access public
+         * @param {function} enterKeyPressListenerCallback 
+         */
+        setDocumentEnterKeyPressEventListener: function (enterKeyPressListenerCallback) {
+            document.addEventListener('keypress', (event) => {
+                if (event.keyCode === 13 || event.which === 13) {
+                    enterKeyPressListenerCallback();
+                }
+            });
         }
     };
 })();
 
 var Controller = (function (budgetController, uIController) {
     
-    var addButtonDOM = document.getElementsByClassName('add__btn')[0];
-
-    addButtonDOM.addEventListener('click', addButtonOnClickListener);
-    registerKeyPressListener(document);
-
-    function registerKeyPressListener(document) {
-        document.addEventListener('keypress', (event) => {
-            if (event.keyCode === 13 || event.which === 13) {
-                // invoke the add button on click
-                addButtonDOM.click();
-            }
-        });
-    }
+    uIController.setAddButtonOnClickListener(handleAddValue);
+    UIController.setDocumentEnterKeyPressEventListener(handleAddValue);
 
     /**
      * Add onclick listeners for add related operations
      * @access private
      */
-    function addButtonOnClickListener() {
+    function handleAddValue() {
         //TODO: 
         // 1. get the input data
         var addInputValues = uIController.getAddInputValues();
@@ -70,15 +85,12 @@ var Controller = (function (budgetController, uIController) {
         console.log("TODO!");
         console.log(addInputValues);
     }
-
-    return {}
+    
+    return {
+        
+    }
 
 })(BudgetController, UIController);
-
-
-
-
-
 
 // top level
 

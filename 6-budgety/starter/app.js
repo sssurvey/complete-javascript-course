@@ -1,5 +1,146 @@
 var BudgetController = (function () {
-    return {}
+
+    const TRANSACTION_TYPE = {
+        income: 'INC',
+        expense: 'EXP'
+    };
+
+    /**
+     * The data structure of the budget controller on all transaction items.
+     * 
+     * Every transaction user created will be added to this object. With the
+     * epenses pushed to the @field expenses array, and income at @field income
+     * array.
+     * 
+     * @name allTransactions
+     * @access private
+     */
+    var allTransactions = {
+            expenses: [],
+            income: []
+    }
+
+    /**
+     * The data structure that provide helpful functions to report income/expense
+     * and totals.
+     * 
+     * This object contains 3 functions that can provide netIncome, netExpense
+     * and netTotals, calculated based on allTransactions
+     * 
+     * @name summary
+     * @access private
+     */
+    var summary = {
+
+        /**
+         * This function provide a sum of all expenses.
+         * 
+         * @name summary.getExpenseTotals
+         * @access private
+         * @return {Number}
+         */
+        getExpenseTotals: () => {
+            var sumOfExpenses = 0;
+            allTransactions.expenses.forEach((transaction) => {
+                if (transaction.transactionType === TRANSACTION_TYPE.expense) {
+                    sumOfExpenses += transaction.amount;
+                }
+            });
+            return sumOfExpenses;
+         },
+
+        /**
+         * This function provide a sum of all income.
+         *
+         * @name summary.getIncomeTotals
+         * @access private
+         * @return {Number}
+         */
+        getIncomeTotals: () => {
+            var sumOfIncome = 0;
+            allTransactions.expenses.forEach((transaction) => {
+                if (transaction.transactionType === TRANSACTION_TYPE.income) {
+                    sumOfIncome += transaction.amount;
+                }
+            });
+            return sumOfIncome;
+         },
+
+        /**
+         * This function provide a sum of all transactions.
+         *
+         * @name summary.getTotals
+         * @access private
+         * @return {Number}
+         */
+        getTotals: () => {
+            return this.getIncomeTotals() - this.getExpenseTotals();
+        }
+    }
+
+    /**
+     * This is the constructor for Transaction class.
+     * 
+     * The constructor will generate a Transaction instance. A transaction can 
+     * represent both an Expense or a Income type. Which represented the spending
+     * and income of a budget.
+     * 
+     * @class @name Transaction
+     * @access private
+     * 
+     * @param {TRANSACTION_TYPE} transactionType 
+     * @param {String} title 
+     * @param {String} description 
+     * @param {Number} amount 
+     * 
+     * @returns {Object} transaction
+     */
+    var Transaction = function (transactionType, title, description, amount) {
+        this.transactionType = transactionType;
+        this.title = title;
+        this.description = description;
+        this.amount = amount;
+        this.id = this.getId();
+    };
+    
+    /**
+     * This is a method of @class Transaction.
+     * 
+     * A unique ID will be created for transaction object lazily when this method
+     * is invoked. If the method is invoked before on a object in constructor, 
+     * the old value will be returned as the id.
+     * 
+     * @name getId
+     * @access private
+     * @memberof Transaction
+     * 
+     * @returns {String} id
+     */
+    Transaction.prototype.getId = function () {
+        if (this.id === undefined) {
+            this.id = generateId(this);
+            return this.id;
+        }
+        else return this.id;
+        function generateId(object) {
+            var date = new Date();
+            return ('' +
+                (object.transactionType === TRANSACTION_TYPE.EXPENSE ? 1 : 0) +
+                (object.title.length) +
+                (object.description.length) +
+                (object.amount) +
+                (date.getTime()));
+        }
+    };
+
+    // var test = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
+    // console.log(test);
+    // console.log(test.getId());
+    // console.log(test);
+
+    return {
+
+    }
 })();
 
 var UIController = (function () {

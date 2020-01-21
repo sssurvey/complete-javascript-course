@@ -31,7 +31,6 @@ var BudgetController = (function () {
      * @access private
      */
     var summary = {
-
         /**
          * This function provide a sum of all expenses.
          * 
@@ -124,22 +123,26 @@ var BudgetController = (function () {
         else return this.id;
         function generateId(object) {
             var date = new Date();
-            return ('' +
-                (object.transactionType === TRANSACTION_TYPE.EXPENSE ? 1 : 0) +
+            return ((object.transactionType === TRANSACTION_TYPE.EXPENSE ? 1 : 0) +
                 (object.title.length) +
                 (object.description.length) +
                 (object.amount) +
-                (date.getTime()));
+                (date.getTime() + date.getMilliseconds()) +
+                (Math.floor(Math.random() * 100)));
         }
     };
 
     // var test = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
+    // var test1 = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
+    // var test2 = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
+    // var test3 = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
     // console.log(test);
+    // console.log(test1);
     // console.log(test.getId());
-    // console.log(test);
+    // console.log(test1.getId());
 
     return {
-
+        //TODO: Add API for add transaction
     }
 })();
 

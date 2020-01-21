@@ -143,6 +143,25 @@ var BudgetController = (function () {
 
     return {
         //TODO: Add API for add transaction
+        addExpense: function () {
+
+        },
+
+        addIncome: function () {
+
+        },
+
+        getTotalsReport: function () {
+            return summary.getTotals();
+        },
+
+        getExpenseTotals: function () {
+            return summary.getExpenseTotals();
+        },
+
+        getIncomeTotals: function () {
+
+        }
     }
 })();
 

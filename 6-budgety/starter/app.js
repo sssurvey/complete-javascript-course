@@ -16,8 +16,8 @@ var BudgetController = (function () {
      * @access private
      */
     var allTransactions = {
-            expenses: [],
-            income: []
+        income: [],
+        expense: [] 
     }
 
     /**

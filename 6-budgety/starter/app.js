@@ -41,7 +41,7 @@ var BudgetController = (function () {
         getExpenseTotals: () => {
             var sumOfExpenses = 0;
             if (allTransactions.expense.length > 0) {
-                allTransactions.expenses.forEach((transaction) => {
+                allTransactions.expense.forEach((transaction) => {
                     if (transaction.transactionType === TRANSACTION_TYPE.expense) {
                         sumOfExpenses += transaction.amount;
                     }
@@ -246,8 +246,8 @@ var UIController = (function () {
          *
          * Details:
          * @var {HTMLElement} addTypeDOM type:
-         * "+" operator for increase
-         * "-" operator for decrease
+         * @var {boolean} true for income
+         * @var {boolean} false for expense
          */
         getAddInputValues: function() {
             var addTypeDOM = document.getElementsByClassName(ADD_TYPE)[0];
@@ -255,7 +255,7 @@ var UIController = (function () {
             var addDescriptionDOM = document.getElementsByClassName(ADD_DESCRIPTION)[0];
             
             return {
-                type: addTypeDOM.value,
+                isIncome: (addTypeDOM.value === 'inc'),
                 description: addDescriptionDOM.value,
                 value: valueDOM.value,
             }
@@ -299,13 +299,27 @@ var Controller = (function (budgetController, uIController) {
         UIController.setDocumentEnterKeyPressEventListener(handleAddExpense);
     }
 
+    /**
+     * Save transaction to budget controller based on the transaction type
+     * 
+     * Save transaction as Income or Expense based on isIncome field of the 
+     * inputObject
+     * 
+     * @name saveInputAsTransaction
+     * @access private
+     * 
+     * @param {Object} inputObject 
+     * @var {boolean} inputObject.isIncome true for income, false for expense
+     * @var {String} inputObject.description
+     * @var {Number} inputObject.value
+     */
     function saveInputAsTransaction(inputObject) {
-        if (inputObject.type === 'exp') {
-            budgetController
-                .addExpense(inputObject.description, inputObject.value);
-        } else {
+        if (inputObject.isIncome) {
             budgetController
                 .addIncome(inputObject.description, inputObject.value);
+        } else {
+            budgetController
+                .addExpense(inputObject.description, inputObject.value);
         }
     }
 
@@ -326,6 +340,7 @@ var Controller = (function (budgetController, uIController) {
 
         // test:
         console.log("TODO!");
+        console.log("total = " + budgetController.getTotalsReport());
     }
     
     return {

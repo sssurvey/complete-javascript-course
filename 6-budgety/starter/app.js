@@ -3,7 +3,7 @@ var BudgetController = (function () {
     const TRANSACTION_TYPE = {
         income: 'INC',
         expense: 'EXP'
-    };
+    }
 
     /**
      * The data structure of the budget controller on all transaction items.
@@ -40,11 +40,13 @@ var BudgetController = (function () {
          */
         getExpenseTotals: () => {
             var sumOfExpenses = 0;
-            allTransactions.expenses.forEach((transaction) => {
-                if (transaction.transactionType === TRANSACTION_TYPE.expense) {
-                    sumOfExpenses += transaction.amount;
-                }
-            });
+            if (allTransactions.expense.length > 0) {
+                allTransactions.expenses.forEach((transaction) => {
+                    if (transaction.transactionType === TRANSACTION_TYPE.expense) {
+                        sumOfExpenses += transaction.amount;
+                    }
+                });
+            }
             return sumOfExpenses;
          },
 
@@ -57,11 +59,13 @@ var BudgetController = (function () {
          */
         getIncomeTotals: () => {
             var sumOfIncome = 0;
-            allTransactions.expenses.forEach((transaction) => {
-                if (transaction.transactionType === TRANSACTION_TYPE.income) {
-                    sumOfIncome += transaction.amount;
-                }
-            });
+            if (allTransactions.income.length > 0) {
+                allTransactions.income.forEach((transaction) => {
+                    if (transaction.transactionType === TRANSACTION_TYPE.income) {
+                        sumOfIncome += transaction.amount;
+                    }
+                });
+            }
             return sumOfIncome;
          },
 
@@ -73,7 +77,9 @@ var BudgetController = (function () {
          * @return {Number}
          */
         getTotals: () => {
-            return this.getIncomeTotals() - this.getExpenseTotals();
+            var incomeTotal = summary.getIncomeTotals();
+            var expenseTotals = summary.getExpenseTotals();
+            return incomeTotal - expenseTotals;
         }
     }
 
@@ -88,17 +94,15 @@ var BudgetController = (function () {
      * @access private
      * 
      * @param {TRANSACTION_TYPE} transactionType 
-     * @param {String} title 
      * @param {String} description 
      * @param {Number} amount 
      * 
      * @returns {Object} transaction
      */
-    var Transaction = function (transactionType, title, description, amount) {
+    var Transaction = function (transactionType, description, amount) {
         this.transactionType = transactionType;
-        this.title = title;
         this.description = description;
-        this.amount = amount;
+        this.amount = Number(amount);
         this.id = this.getId();
     };
     
@@ -124,7 +128,6 @@ var BudgetController = (function () {
         function generateId(object) {
             var date = new Date();
             return ((object.transactionType === TRANSACTION_TYPE.EXPENSE ? 1 : 0) +
-                (object.title.length) +
                 (object.description.length) +
                 (object.amount) +
                 (date.getTime() + date.getMilliseconds()) +
@@ -142,25 +145,85 @@ var BudgetController = (function () {
     // console.log(test1.getId());
 
     return {
-        //TODO: Add API for add transaction
-        addExpense: function () {
-
+        /**
+         * Add a income type transaction.
+         * 
+         * This function will create a new Transaction with type Income and store
+         * it in the allTransactions.income field.
+         * @name addExpense
+         * @access public
+         * 
+         * @param {String} description 
+         * @param {Number} amount 
+         */
+        addExpense: function (description, amount) {
+            var expense = new Transaction(TRANSACTION_TYPE.expense,
+                description,
+                amount);
+            allTransactions.expense.push(expense);
         },
 
-        addIncome: function () {
-
+        /**
+         * Add a expense type transaction.
+         * 
+         * This function will create a new Transaction with type Expense and store
+         * it in the allTransactions.income field.
+         * @name addIncome
+         * @access public
+         * 
+         * @param {String} description 
+         * @param {String} amount 
+         */
+        addIncome: function (description, amount) {
+            var income = new Transaction(TRANSACTION_TYPE.income,
+                description,
+                amount);
+            allTransactions.income.push(income);
         },
 
+        /**
+         * Generate a sum of all transactions.
+         * 
+         * This function will return the sum of all transactions and return it as
+         * a number.
+         * 
+         * @name getTotalsReport
+         * @access public
+         * 
+         * @returns {Number} sum of all transactions' amounts
+         */
         getTotalsReport: function () {
             return summary.getTotals();
         },
 
+        /**
+         * Generate a sum of all expenses.
+         *
+         * This function will return the sum of all expenses and return it as
+         * a number.
+         *
+         * @name getExpenseTotals
+         * @access public
+         *
+         * @returns {Number} sum of all expenses' amounts
+         */
         getExpenseTotals: function () {
             return summary.getExpenseTotals();
         },
 
+        /**
+         * Generate a sum of all incomes.
+         *
+         * This function will return the sum of all incomes and return it as
+         * a number.
+         *
+         * @name getIncomeTotals
+         * @access public
+         *
+         * @returns {Number} sum of all incomes' amounts
+         */
         getIncomeTotals: function () {
-
+            return summary.getIncomeTotals();
         }
     }
 })();
@@ -236,23 +299,33 @@ var Controller = (function (budgetController, uIController) {
         UIController.setDocumentEnterKeyPressEventListener(handleAddExpense);
     }
 
+    function saveInputAsTransaction(inputObject) {
+        if (inputObject.type === 'exp') {
+            budgetController
+                .addExpense(inputObject.description, inputObject.value);
+        } else {
+            budgetController
+                .addIncome(inputObject.description, inputObject.value);
+        }
+    }
+
     /**
      * Add onclick listeners for add related operations
+     * @name handleAddExpense
      * @access private
      */
     function handleAddExpense() {
         //TODO: 
         // 1. get the input data
         var addInputValues = uIController.getAddInputValues();
-
         // 2. Add item to the buddget controller
+        saveInputAsTransaction(addInputValues);
         // 3. Add the item to the UI
         // 4. Calculate the budget
         // 5. Display the budget on the UI
 
         // test:
         console.log("TODO!");
-        console.log(addInputValues);
     }
     
     return {

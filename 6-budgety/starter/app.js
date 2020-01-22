@@ -135,15 +135,6 @@ var BudgetController = (function () {
         }
     };
 
-    // var test = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
-    // var test1 = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
-    // var test2 = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
-    // var test3 = new Transaction(TRANSACTION_TYPE.income, 'JJ', 'haha', 50);
-    // console.log(test);
-    // console.log(test1);
-    // console.log(test.getId());
-    // console.log(test1.getId());
-
     return {
         /**
          * Add a income type transaction.
@@ -340,7 +331,7 @@ var Controller = (function (budgetController, uIController) {
 
         // test:
         console.log("TODO!");
-        console.log("total = " + budgetController.getTotalsReport());
+        // console.log("total = " + budgetController.getTotalsReport());
     }
     
     return {

@@ -146,12 +146,15 @@ var BudgetController = (function () {
          * 
          * @param {String} description 
          * @param {Number} amount 
+         * 
+         * @returns {Object} expense transaction object
          */
         addExpense: function (description, amount) {
             var expense = new Transaction(TRANSACTION_TYPE.expense,
                 description,
                 amount);
             allTransactions.expense.push(expense);
+            return expense;
         },
 
         /**
@@ -164,12 +167,15 @@ var BudgetController = (function () {
          * 
          * @param {String} description 
          * @param {String} amount 
+         * 
+         * @returns {Object} income transaction object
          */
         addIncome: function (description, amount) {
             var income = new Transaction(TRANSACTION_TYPE.income,
                 description,
                 amount);
             allTransactions.income.push(income);
+            return income;
         },
 
         /**
@@ -275,6 +281,19 @@ var UIController = (function () {
                     enterKeyPressListenerCallback();
                 }
             });
+        },
+        /**
+         * Add a transaction to the Expense column
+         * 
+         * This function will manipulate the dom to update the expense column to
+         * display expense transactions
+         * 
+         * @name addNewExpenseLineItem
+         * @access public
+         */
+        addTransactionLineItem: function (isIncome, description, amount, id) {
+            //TODO: here we will use the isIncome to detect if the item is income
+            //or expense, and then we using use private method to save it
         }
     };
 })();
@@ -303,13 +322,15 @@ var Controller = (function (budgetController, uIController) {
      * @var {boolean} inputObject.isIncome true for income, false for expense
      * @var {String} inputObject.description
      * @var {Number} inputObject.value
+     * 
+     * @returns {Object} transaction object income/expense
      */
     function saveInputAsTransaction(inputObject) {
         if (inputObject.isIncome) {
-            budgetController
+            return budgetController
                 .addIncome(inputObject.description, inputObject.value);
         } else {
-            budgetController
+            return budgetController
                 .addExpense(inputObject.description, inputObject.value);
         }
     }
@@ -324,7 +345,7 @@ var Controller = (function (budgetController, uIController) {
         // 1. get the input data
         var addInputValues = uIController.getAddInputValues();
         // 2. Add item to the buddget controller
-        saveInputAsTransaction(addInputValues);
+        var savedTransaction = saveInputAsTransaction(addInputValues);
         // 3. Add the item to the UI
         // 4. Calculate the budget
         // 5. Display the budget on the UI

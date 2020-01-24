@@ -221,7 +221,24 @@ var BudgetController = (function () {
          */
         getIncomeTotals: function () {
             return summary.getIncomeTotals();
-        }
+        },
+
+        /**
+         * Check transaction is income or not
+         * 
+         * This function will return a boolean value representing if the transaction
+         * is income or not
+         * 
+         * @name IsIncomeTransction
+         * @access public
+         * 
+         * @param {String} TRANSACTION_TYPE
+         * 
+         * @returns {boolean} isIncome?
+         */
+        IsIncomeTransction: function (transactionType) { 
+            return transactionType === TRANSACTION_TYPE.income;
+        } 
     }
 })();
 
@@ -232,6 +249,60 @@ var UIController = (function () {
     const ADD_VALUE = 'add__value';
     const ADD_DESCRIPTION = 'add__description';
 
+    const EXPENSES_LIST = 'expenses__list';
+    const INCOME_LIST = 'income__list';
+
+    const ID_PLACE_HOLDER = "%id%";
+    const DESCRIPTION_PLACE_HOLDER = "%description%";
+    const AMOUNT_PLACE_HOLDER = "%amount%";
+
+    const INCOME_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+    const EXPENSE_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+
+    /**
+     * Add a expense transaction to UI
+     * 
+     * This function will expend the expense list on ui
+     * 
+     * @name addExpenseLineItem
+     * @access private
+     * 
+     * @param {String} description 
+     * @param {String} amount 
+     * @param {Number} id 
+     */
+    function addExpenseLineItem(description, amount, id) {
+        var html = EXPENSE_LINE_ITEM_HTML;
+        html = html
+            .replace(ID_PLACE_HOLDER, id)
+            .replace(DESCRIPTION_PLACE_HOLDER, description)
+            .replace(AMOUNT_PLACE_HOLDER, amount);
+        var expensesListDom = document.getElementsByClassName(EXPENSES_LIST)[0];
+        expensesListDom.insertAdjacentHTML('afterbegin', html);
+    }
+
+    /**
+     * Add an income transaction to UI
+     * 
+     * This function will expend the income list on ui
+     * 
+     * @name addIncomeLineItem
+     * @access private
+     * 
+     * @param {String} description 
+     * @param {String} amount 
+     * @param {Number} id 
+     */
+    function addIncomeLineItem(description, amount, id) {
+        var html = INCOME_LINE_ITEM_HTML;
+        html = html
+            .replace(ID_PLACE_HOLDER, id)
+            .replace(DESCRIPTION_PLACE_HOLDER, description)
+            .replace(AMOUNT_PLACE_HOLDER, amount);
+        var incomeListDom = document.getElementsByClassName(INCOME_LIST)[0];
+        incomeListDom.insertAdjacentHTML('afterbegin', html);
+    }
+    
     return {
         /**
          * Return UI Input types:
@@ -292,8 +363,16 @@ var UIController = (function () {
          * @access public
          */
         addTransactionLineItem: function (isIncome, description, amount, id) {
-            //TODO: here we will use the isIncome to detect if the item is income
-            //or expense, and then we using use private method to save it
+            switch (isIncome) {
+                case true:
+                    addIncomeLineItem(description, amount, id);
+                    break;
+                case false:
+                    addExpenseLineItem(description, amount, id);
+                    break;
+                default:
+                    console.log("ERROR")
+            }
         }
     };
 })();
@@ -347,6 +426,11 @@ var Controller = (function (budgetController, uIController) {
         // 2. Add item to the buddget controller
         var savedTransaction = saveInputAsTransaction(addInputValues);
         // 3. Add the item to the UI
+        uIController.addTransactionLineItem(
+            budgetController.IsIncomeTransction(savedTransaction.transactionType),
+            savedTransaction.description,
+            savedTransaction.amount,
+            saveInputAsTransaction.id);
         // 4. Calculate the budget
         // 5. Display the budget on the UI
 

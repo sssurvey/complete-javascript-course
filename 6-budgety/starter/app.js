@@ -373,6 +373,22 @@ var UIController = (function () {
                 default:
                     console.log("ERROR")
             }
+        },
+
+        /**
+         * Clears the input fileds after the user added a transaction
+         * 
+         * @name clearInputFields
+         * @access public
+         */
+        clearInputFields: function() {
+            var fields = document.querySelectorAll('.' + ADD_DESCRIPTION + ', ' 
+            + '.' + ADD_VALUE);
+            // convert list to array;
+            var fieldsArray = Array.prototype.slice.call(fields);
+            fieldsArray.forEach((item) => { 
+                item.value = ''; 
+            });
         }
     };
 })();
@@ -431,8 +447,10 @@ var Controller = (function (budgetController, uIController) {
             savedTransaction.description,
             savedTransaction.amount,
             saveInputAsTransaction.id);
-        // 4. Calculate the budget
-        // 5. Display the budget on the UI
+        // 4. Clear the fields
+        uIController.clearInputFields();
+        // 5. Calculate the budget
+        // 6. Display the budget on the UI
 
         // test:
         console.log("TODO!");

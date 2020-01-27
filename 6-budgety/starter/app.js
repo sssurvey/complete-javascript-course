@@ -282,6 +282,46 @@ var UIController = (function () {
     }
 
     /**
+     * This function will validate the transaction object we passed in
+     * 
+     * If the transaction object has isIncome that is true or false and description
+     * not equals to empty or null or undefined etc and if the amount is not equal
+     * to zero and is a number than the object passed the validation
+     * 
+     * @name isTranasctionItemValidate
+     * @access private
+     * 
+     * @param {Object} AnomTransactionItem
+     * The param object is an anom object with following fields:
+     * @field isIncome boolean
+     * @field description string
+     * @field amount Number
+     * 
+     * @returns {Boolean} isValid
+     */
+    function isTranasctionItemValidate(transactionItem) {
+
+        if (transactionItem.isIncome === true
+            || transactionItem.isIncome === false) {
+            // no-op
+        } else return false;
+
+        if (transactionItem.description) {
+            // no-op
+        }
+        else return false;
+
+        if (!isNaN(transactionItem.amount)
+            && transactionItem.amount > 0) {
+            // no-op
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Add an income transaction to UI
      * 
      * This function will expend the income list on ui
@@ -325,7 +365,7 @@ var UIController = (function () {
             return {
                 isIncome: (addTypeDOM.value === 'inc'),
                 description: addDescriptionDOM.value,
-                value: valueDOM.value,
+                value: parseFloat(valueDOM.value),
             }
         },
         /**
@@ -363,15 +403,24 @@ var UIController = (function () {
          * @access public
          */
         addTransactionLineItem: function (isIncome, description, amount, id) {
-            switch (isIncome) {
-                case true:
-                    addIncomeLineItem(description, amount, id);
-                    break;
-                case false:
-                    addExpenseLineItem(description, amount, id);
-                    break;
-                default:
-                    console.log("ERROR")
+            if (isTranasctionItemValidate(
+                {
+                    isIncome,
+                    description,
+                    amount
+                })) {
+                switch (isIncome) {
+                    case true:
+                        addIncomeLineItem(description, amount, id);
+                        break;
+                    case false:
+                        addExpenseLineItem(description, amount, id);
+                        break;
+                    default:
+                        console.log("ERROR")
+                }
+            } else {
+                console.log("ERROR: Invalidate Item")
             }
         },
 
@@ -416,7 +465,7 @@ var Controller = (function (budgetController, uIController) {
      * @param {Object} inputObject 
      * @var {boolean} inputObject.isIncome true for income, false for expense
      * @var {String} inputObject.description
-     * @var {Number} inputObject.value
+     * @var {Float} inputObject.value
      * 
      * @returns {Object} transaction object income/expense
      */
@@ -428,6 +477,12 @@ var Controller = (function (budgetController, uIController) {
             return budgetController
                 .addExpense(inputObject.description, inputObject.value);
         }
+    }
+
+    //TODO: updatebudget
+    function refreshBudget() {
+        // 5. Calculate the budget
+        // 6. Display the budget on the UI
     }
 
     /**
@@ -449,14 +504,14 @@ var Controller = (function (budgetController, uIController) {
             saveInputAsTransaction.id);
         // 4. Clear the fields
         uIController.clearInputFields();
-        // 5. Calculate the budget
-        // 6. Display the budget on the UI
+        // 5. Update budget
+        refreshBudget();
 
         // test:
         console.log("TODO!");
         // console.log("total = " + budgetController.getTotalsReport());
     }
-    
+
     return {
         /**
          * This is the init function of the Controller module

@@ -249,6 +249,10 @@ var UIController = (function () {
     const ADD_VALUE = 'add__value';
     const ADD_DESCRIPTION = 'add__description';
 
+    const BUDGET_VALUE_TITLE = 'budget__value';
+    const BUDGET_INCOME_VALUE = 'budget__income--value';
+    const BUDGET_EXPENSE_VALUE = 'budget__expenses--value';
+
     const EXPENSES_LIST = 'expenses__list';
     const INCOME_LIST = 'income__list';
 
@@ -438,6 +442,21 @@ var UIController = (function () {
             fieldsArray.forEach((item) => { 
                 item.value = ''; 
             });
+        },
+
+        // TODO: add fromating for the text contents
+        // Add refresh for the percentage parts
+        refreshBudget: function (totalBudget, incomeBudget, expenseBudget) {
+            var budgetValueTitleDOM = document
+                .getElementsByClassName(BUDGET_VALUE_TITLE)[0];
+            var budgetIncomeValueDOM = document
+                .getElementsByClassName(BUDGET_INCOME_VALUE)[0];
+            var budgetExpenseValueDOM = document
+                .getElementsByClassName(BUDGET_EXPENSE_VALUE)[0];
+
+            budgetValueTitleDOM.textContent = totalBudget;
+            budgetIncomeValueDOM.textContent = incomeBudget;
+            budgetExpenseValueDOM.textContent = expenseBudget;
         }
     };
 })();
@@ -481,8 +500,12 @@ var Controller = (function (budgetController, uIController) {
 
     //TODO: updatebudget
     function refreshBudget() {
-        // 5. Calculate the budget
         // 6. Display the budget on the UI
+        uIController.refreshBudget(
+            budgetController.getTotalsReport(),
+            budgetController.getIncomeTotals(),
+            budgetController.getExpenseTotals()
+        )
     }
 
     /**
@@ -520,6 +543,7 @@ var Controller = (function (budgetController, uIController) {
          */
         init: function () {
             setUpEventListeners();
+            refreshBudget();
         }
     }
 

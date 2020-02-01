@@ -248,6 +248,11 @@ var BudgetController = (function () {
 
 var UIController = (function () {
 
+    const MONETARY_FORMAT_INFO = {
+        DECIMAL: 2,
+        UNIT: "$"
+    };
+
     const ADD_TYPE = 'add__type';
     const ADD_BUTTON = 'add__btn';
     const ADD_VALUE = 'add__value';
@@ -338,6 +343,24 @@ var UIController = (function () {
     }
 
     /**
+     * This function formats number to monetary string
+     * 
+     * Takes the raw representation of amount of money in Number returns a string
+     * representation of the amount with specified unit and decimal points.
+     * 
+     * @name monetaryformat
+     * @access private
+     * 
+     * @param {Number} amount 
+     * 
+     * @return {String} money amount $X.XX
+     */
+    function monetaryformat(amount) {
+        var formattedAmount = amount.toFixed(MONETARY_FORMAT_INFO.DECIMAL);
+        return MONETARY_FORMAT_INFO.UNIT + formattedAmount;
+    }
+
+    /**
      * Add an income transaction to UI
      * 
      * This function will expend the income list on ui
@@ -354,7 +377,7 @@ var UIController = (function () {
         html = html
             .replace(ID_PLACE_HOLDER, id)
             .replace(DESCRIPTION_PLACE_HOLDER, description)
-            .replace(AMOUNT_PLACE_HOLDER, amount);
+            .replace(AMOUNT_PLACE_HOLDER, monetaryformat(amount));
         var incomeListDom = document.getElementsByClassName(INCOME_LIST)[0];
         incomeListDom.insertAdjacentHTML('afterbegin', html);
     }
@@ -464,9 +487,9 @@ var UIController = (function () {
             var budgetExpenseValueDOM = document
                 .getElementsByClassName(BUDGET_EXPENSE_VALUE)[0];
 
-            budgetValueTitleDOM.textContent = totalBudget;
-            budgetIncomeValueDOM.textContent = incomeBudget;
-            budgetExpenseValueDOM.textContent = expenseBudget;
+            budgetValueTitleDOM.textContent = monetaryformat(totalBudget);
+            budgetIncomeValueDOM.textContent = monetaryformat(incomeBudget);
+            budgetExpenseValueDOM.textContent = monetaryformat(expenseBudget);
         }
     };
 })();

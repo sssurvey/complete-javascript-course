@@ -300,7 +300,6 @@ var UIController = (function () {
     const DESCRIPTION_PLACE_HOLDER = "%description%";
     const AMOUNT_PLACE_HOLDER = "%amount%";
 
-    // const SPACE = "";
     const INCOME_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
     const EXPENSE_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
 

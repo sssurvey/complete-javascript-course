@@ -84,6 +84,24 @@ var BudgetController = (function () {
             var incomeTotal = summary.getIncomeTotals();
             var expenseTotals = summary.getExpenseTotals();
             return incomeTotal - expenseTotals;
+        },
+
+        /**
+         * This function provide a percentage calucation of expense/total
+         * 
+         * @name getExpensePercentage
+         * @access private
+         * 
+         * @return {String} XX%
+         */
+        getExpensePercentage: () => {
+            var incomeTotal = summary.getIncomeTotals();
+            if (incomeTotal === 0) {
+                return undefined;
+            } else {
+                var expenseTotals = summary.getExpenseTotals();
+                return (expenseTotals / incomeTotal).toFixed(2) * 100 + "%";
+            }
         }
     }
 
@@ -228,6 +246,18 @@ var BudgetController = (function () {
         },
 
         /**
+         * Return a percentage of the expense in String
+         * 
+         * @name getExpensePercentage
+         * @access public
+         * 
+         * @returns {String} expense percentage
+         */
+        getExpensePercentage: function () {
+            return summary.getExpensePercentage();
+        },
+
+        /**
          * Check transaction is income or not
          * 
          * This function will return a boolean value representing if the transaction
@@ -261,6 +291,7 @@ var UIController = (function () {
     const BUDGET_VALUE_TITLE = 'budget__value';
     const BUDGET_INCOME_VALUE = 'budget__income--value';
     const BUDGET_EXPENSE_VALUE = 'budget__expenses--value';
+    const BUDGET_EXPENSE_PERCENT = 'budget__expenses--percentage';
 
     const EXPENSES_LIST = 'expenses__list';
     const INCOME_LIST = 'income__list';
@@ -269,6 +300,7 @@ var UIController = (function () {
     const DESCRIPTION_PLACE_HOLDER = "%description%";
     const AMOUNT_PLACE_HOLDER = "%amount%";
 
+    // const SPACE = "";
     const INCOME_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
     const EXPENSE_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
 
@@ -357,7 +389,7 @@ var UIController = (function () {
      */
     function monetaryformat(amount) {
         var formattedAmount = amount.toFixed(MONETARY_FORMAT_INFO.DECIMAL);
-        return MONETARY_FORMAT_INFO.UNIT + formattedAmount;
+        return formattedAmount + MONETARY_FORMAT_INFO.UNIT;
     }
 
     /**
@@ -381,7 +413,18 @@ var UIController = (function () {
         var incomeListDom = document.getElementsByClassName(INCOME_LIST)[0];
         incomeListDom.insertAdjacentHTML('afterbegin', html);
     }
-    
+
+    function handleExpenseSummaryPercentage(expensePercentage) {
+        var budgetExpensePercentDOM = document
+            .getElementsByClassName(BUDGET_EXPENSE_PERCENT)[0];
+        if (expensePercentage === undefined) {
+            budgetExpensePercentDOM.style.display = "none";
+        } else {
+            budgetExpensePercentDOM.style.display = "block";
+            budgetExpensePercentDOM.textContent = expensePercentage;
+        }
+    }
+
     return {
         /**
          * Return UI Input types:
@@ -479,7 +522,8 @@ var UIController = (function () {
 
         // TODO: add fromating for the text contents
         // Add refresh for the percentage parts
-        refreshBudget: function (totalBudget, incomeBudget, expenseBudget) {
+        refreshBudget: function (totalBudget, incomeBudget, expenseBudget,
+            expensePercentage) {
             var budgetValueTitleDOM = document
                 .getElementsByClassName(BUDGET_VALUE_TITLE)[0];
             var budgetIncomeValueDOM = document
@@ -490,6 +534,8 @@ var UIController = (function () {
             budgetValueTitleDOM.textContent = monetaryformat(totalBudget);
             budgetIncomeValueDOM.textContent = monetaryformat(incomeBudget);
             budgetExpenseValueDOM.textContent = monetaryformat(expenseBudget);
+
+            handleExpenseSummaryPercentage(expensePercentage);
         }
     };
 })();
@@ -537,7 +583,9 @@ var Controller = (function (budgetController, uIController) {
         uIController.refreshBudget(
             budgetController.getTotalsReport(),
             budgetController.getIncomeTotals(),
-            budgetController.getExpenseTotals()
+            budgetController.getExpenseTotals(),
+            budgetController.getExpensePercentage()
+            // budgetController.getExpensePercentage()
         )
     }
 

@@ -1,3 +1,7 @@
+const EXCEPTIONS = {
+    INPUT_EXCEPTION: "Invalid Input From User"
+};
+
 var BudgetController = (function () {
 
     const TRANSACTION_TYPE = {
@@ -295,15 +299,23 @@ var UIController = (function () {
      * @name isTranasctionItemValidate
      * @access private
      * 
-     * @param {Object} AnomTransactionItem
+     * @param {Boolean} isIncome
+     * @param {String} description
+     * @param {Number} value
      * The param object is an anom object with following fields:
      * @field isIncome boolean
      * @field description string
-     * @field amount Number
+     * @field value Number
      * 
      * @returns {Boolean} isValid
      */
-    function isTranasctionItemValidate(transactionItem) {
+    function isTranasctionItemValidate(isIncome, description, value) {
+
+        var transactionItem = {
+            isIncome: isIncome,
+            description: description,
+            value: value
+        }
 
         if (transactionItem.isIncome === true
             || transactionItem.isIncome === false) {
@@ -315,8 +327,8 @@ var UIController = (function () {
         }
         else return false;
 
-        if (!isNaN(transactionItem.amount)
-            && transactionItem.amount > 0) {
+        if (transactionItem.value === transactionItem.value
+            && transactionItem.value > 0) {
             // no-op
         } else {
             return false;
@@ -351,26 +363,33 @@ var UIController = (function () {
         /**
          * Return UI Input types:
          * This function will return the 3 input values from DOMs: add__type,
-         * add__description and add__value.
+         * add__description and add__value. If the transaction object from user
+         * input does not pass validation, then we throw an error ''
          * @access public
          * Returns UI element DOMs as an object.
          * @return {{ type, description, value }}
+         * @throws {EXCEPTIONS.INPUT_EXCEPTION}
          *
          * Details:
          * @var {HTMLElement} addTypeDOM type:
          * @var {boolean} true for income
          * @var {boolean} false for expense
          */
-        getAddInputValues: function() {
+        getAddInputValues: function () {
             var addTypeDOM = document.getElementsByClassName(ADD_TYPE)[0];
             var valueDOM = document.getElementsByClassName(ADD_VALUE)[0];
             var addDescriptionDOM = document.getElementsByClassName(ADD_DESCRIPTION)[0];
-            
-            return {
+            var transaction = {
                 isIncome: (addTypeDOM.value === 'inc'),
                 description: addDescriptionDOM.value,
                 value: parseFloat(valueDOM.value),
-            }
+            };
+            if (isTranasctionItemValidate(
+                transaction.isIncome,
+                transaction.description,
+                transaction.value
+            )) return transaction;
+            else throw EXCEPTIONS.INPUT_EXCEPTION;
         },
         /**
          * Set onclick listner callbacks for ADD button
@@ -407,24 +426,15 @@ var UIController = (function () {
          * @access public
          */
         addTransactionLineItem: function (isIncome, description, amount, id) {
-            if (isTranasctionItemValidate(
-                {
-                    isIncome,
-                    description,
-                    amount
-                })) {
-                switch (isIncome) {
-                    case true:
-                        addIncomeLineItem(description, amount, id);
-                        break;
-                    case false:
-                        addExpenseLineItem(description, amount, id);
-                        break;
-                    default:
-                        console.log("ERROR")
-                }
-            } else {
-                console.log("ERROR: Invalidate Item")
+            switch (isIncome) {
+                case true:
+                    addIncomeLineItem(description, amount, id);
+                    break;
+                case false:
+                    addExpenseLineItem(description, amount, id);
+                    break;
+                default:
+                    console.log("ERROR")
             }
         },
 
@@ -516,15 +526,20 @@ var Controller = (function (budgetController, uIController) {
     function handleAddExpense() {
         //TODO: 
         // 1. get the input data
-        var addInputValues = uIController.getAddInputValues();
         // 2. Add item to the buddget controller
-        var savedTransaction = saveInputAsTransaction(addInputValues);
-        // 3. Add the item to the UI
-        uIController.addTransactionLineItem(
-            budgetController.IsIncomeTransction(savedTransaction.transactionType),
-            savedTransaction.description,
-            savedTransaction.amount,
-            saveInputAsTransaction.id);
+        try {
+            var addInputValues = uIController.getAddInputValues();
+            var savedTransaction = saveInputAsTransaction(addInputValues);
+            // 3. Add the item to the UI
+            uIController.addTransactionLineItem(
+                budgetController.IsIncomeTransction(savedTransaction.transactionType),
+                savedTransaction.description,
+                savedTransaction.amount,
+                saveInputAsTransaction.id);
+        } catch (error) {
+            console.log(error);
+        }
+
         // 4. Clear the fields
         uIController.clearInputFields();
         // 5. Update budget

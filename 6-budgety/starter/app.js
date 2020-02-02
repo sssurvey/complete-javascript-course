@@ -468,6 +468,22 @@ var UIController = (function () {
             var addButtonDOM = document.getElementsByClassName(ADD_BUTTON)[0];
             addButtonDOM.addEventListener('click', listenerCallback);
         },
+
+        /**
+         * Set onclick listner callbacks for Delete button in line item
+         * 
+         * @name setAddButtonOnClickListener
+         * @access public
+         * 
+         * @param {function} listenerCallback
+         */
+        setItemDeleteButtonListener: function (listenerCallback) {
+            var incomeListDOM = document.getElementsByClassName(INCOME_LIST)[0];
+            var expenseListDOM = document.getElementsByClassName(EXPENSES_LIST)[0];
+            incomeListDOM.addEventListener('click', listenerCallback);
+            expenseListDOM.addEventListener('click', listenerCallback);
+        },
+
         /**
          * Set on keypress callback for the ENTER key
          * This functrion will set the document on enter pressed callback to the
@@ -560,8 +576,27 @@ var Controller = (function (budgetController, uIController) {
      */
     function setUpEventListeners() {
         uIController.setAddButtonOnClickListener(handleAddExpense);
-        UIController.setDocumentEnterKeyPressEventListener(handleAddExpense);
+        uIController.setDocumentEnterKeyPressEventListener(handleAddExpense);
+        uIController.setItemDeleteButtonListener(handleTransactionDeleteButtonClick);
     }
+
+    /**
+     * Callback function for the line transaction item delete button press
+     * 
+     * Will traverse the DOM and delete the line transaction based on the id.
+     * 
+     * @name handleTransactionDeleteButtonClick
+     * @access private
+     * 
+     * @param {click} event 
+     */
+    function handleTransactionDeleteButtonClick(event) {
+        var id = event.target.parentNode.parentNode.parentNode.parentNode.id;
+        
+        //TODO: call ui controller to remove the ui for this transaction
+        //TODO: call budget controller to remove the tranaction
+        //TODO: refresh all budgets
+     }
 
     /**
      * Save transaction to budget controller based on the transaction type
@@ -618,7 +653,7 @@ var Controller = (function (budgetController, uIController) {
                 budgetController.IsIncomeTransction(savedTransaction.transactionType),
                 savedTransaction.description,
                 savedTransaction.amount,
-                saveInputAsTransaction.id);
+                savedTransaction.id);
         } catch (error) {
             console.log(error);
         }

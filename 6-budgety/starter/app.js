@@ -346,28 +346,6 @@ var UIController = (function () {
     const EXPENSE_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
 
     /**
-     * Add a expense transaction to UI
-     * 
-     * This function will expend the expense list on ui
-     * 
-     * @name addExpenseLineItem
-     * @access private
-     * 
-     * @param {String} description 
-     * @param {String} amount 
-     * @param {Number} id 
-     */
-    function addExpenseLineItem(description, amount, id) {
-        var html = EXPENSE_LINE_ITEM_HTML;
-        html = html
-            .replace(ID_PLACE_HOLDER, id)
-            .replace(DESCRIPTION_PLACE_HOLDER, description)
-            .replace(AMOUNT_PLACE_HOLDER, amount);
-        var expensesListDom = document.getElementsByClassName(EXPENSES_LIST)[0];
-        expensesListDom.insertAdjacentHTML('afterbegin', html);
-    }
-
-    /**
      * This function will validate the transaction fields we passed in
      * 
      * If the transaction object has isIncome that is true or false and description
@@ -427,6 +405,28 @@ var UIController = (function () {
     function monetaryformat(amount) {
         var formattedAmount = amount.toFixed(MONETARY_FORMAT_INFO.DECIMAL);
         return formattedAmount + MONETARY_FORMAT_INFO.UNIT;
+    }
+
+    /**
+    * Add a expense transaction to UI
+    * 
+    * This function will expend the expense list on ui
+    * 
+    * @name addExpenseLineItem
+    * @access private
+    * 
+    * @param {String} description 
+    * @param {String} amount 
+    * @param {Number} id 
+    */
+    function addExpenseLineItem(description, amount, id) {
+        var html = EXPENSE_LINE_ITEM_HTML;
+        html = html
+            .replace(ID_PLACE_HOLDER, id)
+            .replace(DESCRIPTION_PLACE_HOLDER, description)
+            .replace(AMOUNT_PLACE_HOLDER, monetaryformat(amount));
+        var expensesListDom = document.getElementsByClassName(EXPENSES_LIST)[0];
+        expensesListDom.insertAdjacentHTML('afterbegin', html);
     }
 
     /**

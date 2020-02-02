@@ -100,7 +100,8 @@ var BudgetController = (function () {
                 return undefined;
             } else {
                 var expenseTotals = summary.getExpenseTotals();
-                return (expenseTotals / incomeTotal).toFixed(2) * 100 + "%";
+                var propotion = expenseTotals / incomeTotal;
+                return (propotion * 100).toFixed(1) + "%";
             }
         }
     }

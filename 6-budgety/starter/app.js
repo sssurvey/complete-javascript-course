@@ -326,7 +326,7 @@ var UIController = (function () {
     }
 
     /**
-     * This function will validate the transaction object we passed in
+     * This function will validate the transaction fields we passed in
      * 
      * If the transaction object has isIncome that is true or false and description
      * not equals to empty or null or undefined etc and if the amount is not equal
@@ -338,10 +338,6 @@ var UIController = (function () {
      * @param {Boolean} isIncome
      * @param {String} description
      * @param {Number} value
-     * The param object is an anom object with following fields:
-     * @field isIncome boolean
-     * @field description string
-     * @field value Number
      * 
      * @returns {Boolean} isValid
      */
@@ -413,6 +409,11 @@ var UIController = (function () {
         incomeListDom.insertAdjacentHTML('afterbegin', html);
     }
 
+    /**
+     * Updates the percentage UI of expesnse in total budget
+     * 
+     * @param {String} expensePercentage 
+     */
     function handleExpenseSummaryPercentage(expensePercentage) {
         var budgetExpensePercentDOM = document
             .getElementsByClassName(BUDGET_EXPENSE_PERCENT)[0];
@@ -519,8 +520,20 @@ var UIController = (function () {
             });
         },
 
-        // TODO: add fromating for the text contents
-        // Add refresh for the percentage parts
+        /**
+         * Refresh the budget descriptions based on passed in values
+         * 
+         * This function will takes refresh the values for the total budget, income
+         * budget, expenseBudget and the expense percentage and update the UI.
+         * 
+         * @name refreshBudget
+         * @access
+         * 
+         * @param {Number} totalBudget 
+         * @param {Number} incomeBudget 
+         * @param {Number} expenseBudget 
+         * @param {String} expensePercentage // Or undefined
+         */
         refreshBudget: function (totalBudget, incomeBudget, expenseBudget,
             expensePercentage) {
             var budgetValueTitleDOM = document

@@ -157,6 +157,33 @@ var BudgetController = (function () {
         }
     };
 
+    /**
+     * Remove the transaction from all transaction based on id
+     * 
+     * This function will use the ID to loop through all transactions and then
+     * remove the transaction that has the matching id.
+     * 
+     * @name removeTransactionFromList
+     * @access public
+     * 
+     * @param {String} id 
+     */
+    function removeTransactionFromList(id) {
+        allTransactions.expense.forEach((item) => {
+            if (item.id === +id) removeItem(allTransactions.expense, item);
+            return;
+        });
+        allTransactions.income.forEach((item) => {
+            if (item.id === +id) removeItem(allTransactions.income, item);
+            return;
+        });
+
+        function removeItem(transactionList, item) {
+            var index = transactionList.indexOf(item);
+            transactionList.splice(index, 1)
+        }
+    }
+
     return {
         /**
          * Add a income type transaction.
@@ -198,6 +225,21 @@ var BudgetController = (function () {
                 amount);
             allTransactions.income.push(income);
             return income;
+        },
+
+        /**
+         * Remove transaction with this id from all transactions
+         * 
+         * This function will call the private function to remove the transaction
+         * that has the match id. This way it is excluded from the budget.
+         * 
+         * @name removeTransaction
+         * @access public
+         * 
+         * @param {String} id 
+         */
+        removeTransaction: function (id) {
+            removeTransactionFromList(id);
         },
 
         /**
@@ -521,6 +563,20 @@ var UIController = (function () {
         },
 
         /**
+         * This function will take an id that represent the line item DOM ID
+         * then we will remove all the HTML code for that HTML element
+         * 
+         * @name removeTransactionLineItem
+         * @access public
+         * 
+         * @param {String} id 
+         */
+        removeTransactionLineItem: function (id) {
+            var transactionLineDOM = document.getElementById(id);
+            transactionLineDOM.parentNode.removeChild(transactionLineDOM)
+        },
+
+        /**
          * Clears the input fileds after the user added a transaction
          * 
          * @name clearInputFields
@@ -592,10 +648,9 @@ var Controller = (function (budgetController, uIController) {
      */
     function handleTransactionDeleteButtonClick(event) {
         var id = event.target.parentNode.parentNode.parentNode.parentNode.id;
-        
-        //TODO: call ui controller to remove the ui for this transaction
-        //TODO: call budget controller to remove the tranaction
-        //TODO: refresh all budgets
+        uIController.removeTransactionLineItem(id);
+        budgetController.removeTransaction(id);
+        refreshBudget();
      }
 
     /**

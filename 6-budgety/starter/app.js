@@ -92,7 +92,7 @@ var BudgetController = (function () {
          * @name getExpensePercentage
          * @access private
          * 
-         * @return {String} XX%
+         * @return {String} XX.X%
          */
         getExpensePercentage: () => {
             var incomeTotal = summary.getIncomeTotals();

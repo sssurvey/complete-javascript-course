@@ -680,15 +680,12 @@ var Controller = (function (budgetController, uIController) {
         }
     }
 
-    //TODO: updatebudget
     function refreshBudget() {
-        // 6. Display the budget on the UI
         uIController.refreshBudget(
             budgetController.getTotalsReport(),
             budgetController.getIncomeTotals(),
             budgetController.getExpenseTotals(),
             budgetController.getExpensePercentage()
-            // budgetController.getExpensePercentage()
         )
     }
 
@@ -698,13 +695,9 @@ var Controller = (function (budgetController, uIController) {
      * @access private
      */
     function handleAddExpense() {
-        //TODO: 
-        // 1. get the input data
-        // 2. Add item to the buddget controller
         try {
             var addInputValues = uIController.getAddInputValues();
             var savedTransaction = saveInputAsTransaction(addInputValues);
-            // 3. Add the item to the UI
             uIController.addTransactionLineItem(
                 budgetController.IsIncomeTransction(savedTransaction.transactionType),
                 savedTransaction.description,
@@ -713,15 +706,8 @@ var Controller = (function (budgetController, uIController) {
         } catch (error) {
             console.log(error);
         }
-
-        // 4. Clear the fields
         uIController.clearInputFields();
-        // 5. Update budget
         refreshBudget();
-
-        // test:
-        console.log("TODO!");
-        // console.log("total = " + budgetController.getTotalsReport());
     }
 
     return {

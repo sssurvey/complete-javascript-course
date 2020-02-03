@@ -92,7 +92,7 @@ var BudgetController = (function () {
          * @name getExpensePercentage
          * @access private
          * 
-         * @return {String} XX.X%
+         * @return {Float}
          */
         getExpensePercentage: () => {
             var incomeTotal = summary.getIncomeTotals();
@@ -101,7 +101,7 @@ var BudgetController = (function () {
             } else {
                 var expenseTotals = summary.getExpenseTotals();
                 var propotion = expenseTotals / incomeTotal;
-                return (propotion * 100).toFixed(1) + "%";
+                return propotion;
             }
         }
     }
@@ -181,8 +181,33 @@ var BudgetController = (function () {
 
         function removeItem(transactionList, item) {
             var index = transactionList.indexOf(item);
-            transactionList.splice(index, 1)
+            transactionList.splice(index, 1);
         }
+    }
+
+    /**
+     * Returns a map of expense id, with percentage
+     * 
+     * Map <id: String, percentage: Float> is returned, the map is consist of each
+     * expense transaction's id and their amount/totalIncome
+     * 
+     * @name calculateIndividuleExpensePercentageMap
+     * @access public
+     * 
+     * @returns {Map<String, Float>}
+     */
+    function calculateIndividuleExpensePercentageMap() {
+        var incomeTotal = summary.getIncomeTotals();
+        var transactionIdPercentMap = new Map();
+        allTransactions.expense.forEach((item) => {
+            if (incomeTotal > 0) {
+                var percentage = item.amount / incomeTotal;
+                transactionIdPercentMap.set(item.id + "", percentage);
+            } else {
+                transactionIdPercentMap.set(item.id + "", undefined);
+            }
+        });
+        return transactionIdPercentMap;
     }
 
     return {
@@ -294,7 +319,7 @@ var BudgetController = (function () {
          * @name getExpensePercentage
          * @access public
          * 
-         * @returns {String} expense percentage
+         * @returns {Float} expense percentage // can return undefined
          */
         getExpensePercentage: function () {
             return summary.getExpensePercentage();
@@ -315,7 +340,34 @@ var BudgetController = (function () {
          */
         IsIncomeTransction: function (transactionType) { 
             return transactionType === TRANSACTION_TYPE.income;
-        } 
+        },
+
+        /**
+         * Return a map of all expense transactions and its percentage to income
+         * 
+         * This function will return a map of expense transaction id, and its
+         * amount / totalIncome as a percentage representation
+         * 
+         * @name getCalculatedIndividuleExpensePercentageMap
+         * @access public
+         * 
+         * @returns {Map<id: String, percent: Number>}
+         */
+        getCalculatedIndividuleExpensePercentageMap: function () {
+            return calculateIndividuleExpensePercentageMap();
+        },
+
+        /**
+         * Returns the percentage representation of value / totalIncome
+         * 
+         * @name calculateExpensePercentage
+         * @access public
+         * 
+         * @param {Number} value 
+         */
+        calculateExpensePercentage: function (value) {
+            return value / summary.getIncomeTotals();
+        }
     }
 })();
 
@@ -342,9 +394,10 @@ var UIController = (function () {
     const ID_PLACE_HOLDER = "%id%";
     const DESCRIPTION_PLACE_HOLDER = "%description%";
     const AMOUNT_PLACE_HOLDER = "%amount%";
+    const TRANSACTION_EXPENSE_PERCENTAGE = "%expense_percentage%";
 
     const INCOME_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
-    const EXPENSE_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__percentage">21%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
+    const EXPENSE_LINE_ITEM_HTML = '<div class="item clearfix" id="%id%"><div class="item__description">%description%</div><div class="right clearfix"><div class="item__value">%amount%</div><div class="item__percentage">%expense_percentage%</div><div class="item__delete"><button class="item__delete--btn"><i class="ion-ios-close-outline"></i></button></div></div></div>'
 
     /**
      * This function will validate the transaction fields we passed in
@@ -419,13 +472,16 @@ var UIController = (function () {
     * @param {String} description 
     * @param {String} amount 
     * @param {Number} id 
+    * @param {Float} rawPercentage
     */
-    function addExpenseLineItem(description, amount, id) {
+    function addExpenseLineItem(description, amount, id, rawPercentage) {
         var html = EXPENSE_LINE_ITEM_HTML;
         html = html
             .replace(ID_PLACE_HOLDER, id)
             .replace(DESCRIPTION_PLACE_HOLDER, description)
-            .replace(AMOUNT_PLACE_HOLDER, monetaryformat(amount));
+            .replace(AMOUNT_PLACE_HOLDER, monetaryformat(amount))
+            .replace(TRANSACTION_EXPENSE_PERCENTAGE, floatPercentageFormatter(rawPercentage));
+
         var expensesListDom = document.getElementsByClassName(EXPENSES_LIST)[0];
         expensesListDom.insertAdjacentHTML('afterbegin', html);
     }
@@ -465,6 +521,53 @@ var UIController = (function () {
         } else {
             budgetExpensePercentDOM.style.display = "block";
             budgetExpensePercentDOM.textContent = expensePercentage;
+        }
+    }
+
+    /**
+     * Format raw float percentage representation to string representation
+     * 
+     * Takes 2 params, one is the raw float percentage, the other the fixedRange.
+     * The fixedRange param will determine the decimal points of the formatted
+     * percentage:
+     * 
+     * i.e: floatPercentage = 18.030001, fixedRange = 2 will return 18.03%
+     * i.e: floatPercentage = 18.030001, fixedRange = 1 will return 18.0%
+     * i.e: floatPercentage = 18.030001, fixedRange = 0 will return 18%
+     * 
+     * @param {Float} floatPercentage 
+     * @param {Number} fixedRange 
+     */
+    function floatPercentageFormatter(floatPercentage, fixedRange) {
+        if (fixedRange === undefined) {
+            return (floatPercentage * 100).toFixed(1) + '%';
+        } else {
+            return (floatPercentage * 100).toFixed(fixedRange) + '%';
+        }
+    }
+
+    /**
+     * Update the percentage for each individule expense transactions
+     * 
+     * Takes in an ID and formatted  percentage string then use the ID to locate
+     * the DOM of expense transaction then update them individuly to have the
+     * percentage displayed, if the percentage string is undefined, then hide the
+     * percentage tag.
+     * 
+     * @name refreshIndividuleExpensePercentageById
+     * @access private
+     * 
+     * @param {String} id 
+     * @param {String} formattedPercentage
+     */
+    function refreshIndividuleExpensePercentageById(id, formattedPercentage) {
+        var transactionDOM = document.getElementById(id);
+        var node = transactionDOM.childNodes[1].childNodes[1];
+        if (formattedPercentage !== undefined) {
+            node.style.display = 'block';
+            node.textContent = formattedPercentage;
+        } else {
+            node.style.display = 'none';
         }
     }
 
@@ -549,14 +652,20 @@ var UIController = (function () {
          * 
          * @name addNewExpenseLineItem
          * @access public
+         * 
+         * @param {Boolean} isIncome
+         * @param {String} description
+         * @param {Number} amount
+         * @param {Number} id
+         * @param {Float} rawPercentage
          */
-        addTransactionLineItem: function (isIncome, description, amount, id) {
+        addTransactionLineItem: function (isIncome, description, amount, id, rawPercentage) {
             switch (isIncome) {
                 case true:
                     addIncomeLineItem(description, amount, id);
                     break;
                 case false:
-                    addExpenseLineItem(description, amount, id);
+                    addExpenseLineItem(description, amount, id, rawPercentage);
                     break;
                 default:
                     console.log("ERROR")
@@ -574,7 +683,8 @@ var UIController = (function () {
          */
         removeTransactionLineItem: function (id) {
             var transactionLineDOM = document.getElementById(id);
-            transactionLineDOM.parentNode.removeChild(transactionLineDOM)
+            var parentNode = transactionLineDOM.parentNode;
+            parentNode.removeChild(transactionLineDOM);
         },
 
         /**
@@ -605,7 +715,7 @@ var UIController = (function () {
          * @param {Number} totalBudget 
          * @param {Number} incomeBudget 
          * @param {Number} expenseBudget 
-         * @param {String} expensePercentage // Or undefined
+         * @param {Float} expensePercentage // Or undefined
          */
         refreshBudget: function (totalBudget, incomeBudget, expenseBudget,
             expensePercentage) {
@@ -620,8 +730,29 @@ var UIController = (function () {
             budgetIncomeValueDOM.textContent = monetaryformat(incomeBudget);
             budgetExpenseValueDOM.textContent = monetaryformat(expenseBudget);
 
-            handleExpenseSummaryPercentage(expensePercentage);
-        }
+            handleExpenseSummaryPercentage(
+                expensePercentage === undefined ? undefined : floatPercentageFormatter(expensePercentage));
+        },
+
+        /**
+         * This function will update all expense line items percentage
+         * 
+         * Takes a transaction <id, percent> map, calculated from BudgetController
+         * then use the id to find all expense transaction and update its percentage
+         * using the percentage provided from the map. If the percentage is undefined
+         * then hides all the expense line item percentages.
+         * 
+         * @name refreshExpenseItemPercentageById
+         * @access public
+         * 
+         * @param {Map<id: String, percentage: Number>} transactionIdPercentageMap 
+         */
+        refreshExpenseItemPercentageById: function (transactionIdPercentageMap) {
+            transactionIdPercentageMap.forEach((percentage, id) => {
+                refreshIndividuleExpensePercentageById(id, 
+                    percentage === undefined ? undefined : floatPercentageFormatter(percentage, 0));
+            });
+        },
     };
 })();
 
@@ -680,6 +811,16 @@ var Controller = (function (budgetController, uIController) {
         }
     }
 
+    /**
+     * Refresh all budget related UI
+     * 
+     * This function will refresh all budget related UIs
+     * 1. Budget reports at the top of the page
+     * 2. each individule expense transaction percentages
+     * 
+     * @name refreshBudget
+     * @access private
+     */
     function refreshBudget() {
         uIController.refreshBudget(
             budgetController.getTotalsReport(),
@@ -687,6 +828,9 @@ var Controller = (function (budgetController, uIController) {
             budgetController.getExpenseTotals(),
             budgetController.getExpensePercentage()
         )
+        uIController.refreshExpenseItemPercentageById(
+            budgetController.getCalculatedIndividuleExpensePercentageMap()
+        );
     }
 
     /**
@@ -702,7 +846,8 @@ var Controller = (function (budgetController, uIController) {
                 budgetController.IsIncomeTransction(savedTransaction.transactionType),
                 savedTransaction.description,
                 savedTransaction.amount,
-                savedTransaction.id);
+                savedTransaction.id,
+                budgetController.calculateExpensePercentage(savedTransaction.amount));
         } catch (error) {
             console.log(error);
         }

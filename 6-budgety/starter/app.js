@@ -517,9 +517,9 @@ var UIController = (function () {
         var budgetExpensePercentDOM = document
             .getElementsByClassName(BUDGET_EXPENSE_PERCENT)[0];
         if (expensePercentage === undefined) {
-            budgetExpensePercentDOM.style.display = "none";
+            budgetExpensePercentDOM.style.visibility = "hidden";
         } else {
-            budgetExpensePercentDOM.style.display = "block";
+            budgetExpensePercentDOM.style.visibility = "visible";
             budgetExpensePercentDOM.textContent = expensePercentage;
         }
     }

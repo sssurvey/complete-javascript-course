@@ -380,8 +380,6 @@ var UIController = (function () {
     };
 
     const EXPENSE = 'exp';
-    const RED_HEX_COLOR = '#e6305e';
-    const GREEN_HEX_COLOR = '#28B9B5';
 
     const ADD_TYPE = 'add__type';
     const ADD_BUTTON = 'add__btn';
@@ -622,17 +620,25 @@ var UIController = (function () {
          * When it is adding expense transaction the add button will be red, when
          * it is adding income transactions the add button would be green.
          * 
-         * @name registerAddTypeButtonOnChangeListener
+         * @name registerAddTransactionColorChangeHandler
          * @access public
          */
-        registerAddTypeButtonOnChangeListener: function () {
+        registerAddTransactionColorChangeHandler: function () {
+            var addDescriptionDOM = document.getElementsByClassName(ADD_DESCRIPTION)[0];
+            var addValueDOM = document.getElementsByClassName(ADD_VALUE)[0];
             var addTypeDOM = document.getElementsByClassName(ADD_TYPE)[0];
             var addButtonDOM = document.getElementsByClassName(ADD_BUTTON)[0];
             addTypeDOM.addEventListener('change', (event) => {
                 if (event.target.value === EXPENSE) {
-                    addButtonDOM.style.color = RED_HEX_COLOR;
+                    addButtonDOM.classList.add('red')
+                    addDescriptionDOM.classList.add('red-focus');
+                    addValueDOM.classList.add('red-focus');
+                    addTypeDOM.classList.add('red-focus');
                 } else {
-                    addButtonDOM.style.color = GREEN_HEX_COLOR;
+                    addButtonDOM.classList.remove('red');
+                    addDescriptionDOM.classList.remove('red-focus');
+                    addValueDOM.classList.remove('red-focus');
+                    addTypeDOM.classList.remove('red-focus');
                 }
             });
         },
@@ -814,7 +820,7 @@ var Controller = (function (budgetController, uIController) {
         uIController.setAddButtonOnClickListener(handleAddExpense);
         uIController.setDocumentEnterKeyPressEventListener(handleAddExpense);
         uIController.setItemDeleteButtonListener(handleTransactionDeleteButtonClick);
-        uIController.registerAddTypeButtonOnChangeListener();
+        uIController.registerAddTransactionColorChangeHandler();
     }
 
     /**

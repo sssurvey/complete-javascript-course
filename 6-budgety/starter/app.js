@@ -375,7 +375,8 @@ var UIController = (function () {
 
     const MONETARY_FORMAT_INFO = {
         DECIMAL: 2,
-        UNIT: "$"
+        LOCALE: 'en-US',
+        UNIT: 'USD'
     };
 
     const ADD_TYPE = 'add__type';
@@ -457,8 +458,13 @@ var UIController = (function () {
      * @return {String} money amount $XX
      */
     function monetaryformat(amount) {
-        var formattedAmount = amount.toFixed(MONETARY_FORMAT_INFO.DECIMAL);
-        return formattedAmount + MONETARY_FORMAT_INFO.UNIT;
+        var numberFormatter = new Intl.NumberFormat(MONETARY_FORMAT_INFO.LOCALE,
+            {
+                style: 'currency',
+                currency: MONETARY_FORMAT_INFO.UNIT,
+                minimumFractionDigits: MONETARY_FORMAT_INFO.DECIMAL
+            });
+        return numberFormatter.format(amount);
     }
 
     /**

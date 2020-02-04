@@ -454,7 +454,7 @@ var UIController = (function () {
      * 
      * @param {Number} amount 
      * 
-     * @return {String} money amount $X.XX
+     * @return {String} money amount $XX
      */
     function monetaryformat(amount) {
         var formattedAmount = amount.toFixed(MONETARY_FORMAT_INFO.DECIMAL);
@@ -731,7 +731,7 @@ var UIController = (function () {
             budgetExpenseValueDOM.textContent = monetaryformat(expenseBudget);
 
             handleExpenseSummaryPercentage(
-                expensePercentage === undefined ? undefined : floatPercentageFormatter(expensePercentage));
+                expensePercentage === undefined ? undefined : floatPercentageFormatter(expensePercentage, 0));
         },
 
         /**

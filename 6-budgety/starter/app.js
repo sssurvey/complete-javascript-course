@@ -379,6 +379,10 @@ var UIController = (function () {
         UNIT: 'USD'
     };
 
+    const EXPENSE = 'exp';
+    const RED_HEX_COLOR = '#e6305e';
+    const GREEN_HEX_COLOR = '#28B9B5';
+
     const ADD_TYPE = 'add__type';
     const ADD_BUTTON = 'add__btn';
     const ADD_VALUE = 'add__value';
@@ -581,6 +585,7 @@ var UIController = (function () {
     return {
         /**
          * Return UI Input types:
+         * 
          * This function will return the 3 input values from DOMs: add__type,
          * add__description and add__value. If the transaction object from user
          * input does not pass validation, then we throw an error ''
@@ -610,8 +615,30 @@ var UIController = (function () {
             )) return transaction;
             else throw EXCEPTIONS.INPUT_EXCEPTION;
         },
+
+        /**
+         * Adds a on change listener to the add type button
+         * 
+         * When it is adding expense transaction the add button will be red, when
+         * it is adding income transactions the add button would be green.
+         * 
+         * @name registerAddTypeButtonOnChangeListener
+         * @access public
+         */
+        registerAddTypeButtonOnChangeListener: function () {
+            var addTypeDOM = document.getElementsByClassName(ADD_TYPE)[0];
+            var addButtonDOM = document.getElementsByClassName(ADD_BUTTON)[0];
+            addTypeDOM.addEventListener('change', (event) => {
+                if (event.target.value === EXPENSE) {
+                    addButtonDOM.style.color = RED_HEX_COLOR;
+                } else {
+                    addButtonDOM.style.color = GREEN_HEX_COLOR;
+                }
+            });
+        },
         /**
          * Set onclick listner callbacks for ADD button
+         * 
          * This function will set the callback for the add button to the function
          * that we passed in as param
          * @access public
@@ -787,6 +814,7 @@ var Controller = (function (budgetController, uIController) {
         uIController.setAddButtonOnClickListener(handleAddExpense);
         uIController.setDocumentEnterKeyPressEventListener(handleAddExpense);
         uIController.setItemDeleteButtonListener(handleTransactionDeleteButtonClick);
+        uIController.registerAddTypeButtonOnChangeListener();
     }
 
     /**

@@ -388,6 +388,7 @@ var UIController = (function () {
     const BUDGET_INCOME_VALUE = 'budget__income--value';
     const BUDGET_EXPENSE_VALUE = 'budget__expenses--value';
     const BUDGET_EXPENSE_PERCENT = 'budget__expenses--percentage';
+    const BUDGET_CURRENT_MONTH = 'budget__title--month';
 
     const EXPENSES_LIST = 'expenses__list';
     const INCOME_LIST = 'income__list';
@@ -759,6 +760,20 @@ var UIController = (function () {
                     percentage === undefined ? undefined : floatPercentageFormatter(percentage, 0));
             });
         },
+
+        /**
+         * Set the current month as the current month for aviliable budget month
+         * 
+         * @name setCurrentDateForDisplay
+         * @access public
+         */
+        setCurrentDateForDisplay: function () {
+            var date = new Date();
+            var monthArr = ['January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'];
+            document.getElementsByClassName(BUDGET_CURRENT_MONTH)[0]
+                .textContent = monthArr[date.getMonth()];
+        }
     };
 })();
 
@@ -861,6 +876,16 @@ var Controller = (function (budgetController, uIController) {
         refreshBudget();
     }
 
+    /**
+     * Handle date related operations
+     * 
+     * @name handleDates
+     * @access public
+     */
+    function handleDates() {
+        uIController.setCurrentDateForDisplay();
+    }
+
     return {
         /**
          * This is the init function of the Controller module
@@ -870,6 +895,7 @@ var Controller = (function (budgetController, uIController) {
         init: function () {
             setUpEventListeners();
             refreshBudget();
+            handleDates();
         }
     }
 

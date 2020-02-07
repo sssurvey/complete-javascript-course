@@ -6,13 +6,13 @@ console.log(3);
 
 
 function damn() {
-    return new Promise((r, e) => {
+    return new Promise((onSuccess, onError) => {
         try {
             setTimeout(() => {
-                r('damm');
+                onSuccess('damm');
             }, 3000);
-        } catch {
-            e('err regjected!!!!!');
+        } catch (e) {
+            onError('err regjected!!!!! -> ' + e);
         }
     });
 }

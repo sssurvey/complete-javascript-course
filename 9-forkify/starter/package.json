@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit  1",
-    "dev": "webpack"
+    "bundleDev": "webpack --mode development",
+    "bundleProd": "webpack --mode production"
   },
   "author": "haomin x jonas",
   "license": "MIT",

@@ -6,14 +6,17 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit  1",
     "bundleDev": "webpack --mode development",
-    "bundleProd": "webpack --mode production"
+    "bundleProd": "webpack --mode production",
+    "start": "webpack-dev-server --mode development --open"
   },
   "author": "haomin x jonas",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^6.8.0",
+    "html-webpack-plugin": "^3.2.0",
     "webpack": "^4.41.5",
-    "webpack-cli": "^3.3.10"
+    "webpack-cli": "^3.3.10",
+    "webpack-dev-server": "^3.10.3"
   },
   "dependencies": {
     "jquery": "^3.4.1"

@@ -1,2 +1,3 @@
 // Global app controller
-console.log('jadsafffsf');
+let a = 'damn';
+console.log(`jadsafffsf ${a}`);
